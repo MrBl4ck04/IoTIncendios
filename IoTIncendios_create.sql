@@ -3,7 +3,7 @@
 -- tables
 -- Table: co2
 CREATE TABLE co2 (
-    id int  NOT NULL,
+    id int  NOT NULL AUTO_INCREMENT,
     fecha date  NOT NULL,
     hora time  NOT NULL,
     valor double(30,3)  NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE co2 (
 
 -- Table: humedad
 CREATE TABLE humedad (
-    id int  NOT NULL,
+    id int  NOT NULL AUTO_INCREMENT,
     fecha date  NOT NULL,
     hora time  NOT NULL,
     valor double(30,3)  NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE humedad (
 
 -- Table: humo
 CREATE TABLE humo (
-    id int  NOT NULL,
+    id int  NOT NULL AUTO_INCREMENT,
     fecha date  NOT NULL,
     hora time  NOT NULL,
     valor double(30,3)  NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE humo (
 
 -- Table: temperatura
 CREATE TABLE temperatura (
-    id int  NOT NULL,
+    id int  NOT NULL AUTO_INCREMENT,
     fecha date  NOT NULL,
     hora time  NOT NULL,
     valor double(30,3)  NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE temperatura (
 
 -- Table: usuarios
 CREATE TABLE usuarios (
-    id int  NOT NULL,
+    id int  NOT NULL AUTO_INCREMENT,
     usuario varchar(50)  NOT NULL,
     password varchar(30)  NOT NULL,
     CONSTRAINT usuarios_pk PRIMARY KEY (id)
