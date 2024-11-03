@@ -48,10 +48,10 @@ print("Tarjeta Detectada: " + BOARD_TYPE)
 # Configuración de los pines según la tarjeta detectada
 if BOARD_TYPE == Board.BoardType.ESP32:
     led = Pin(2, Pin.OUT)  # GPIO 2 para el ESP32 (LED integrado)
-    button_increment = Pin(35, Pin.IN, Pin.PULL_UP)
-    button_decrement = Pin(32, Pin.IN, Pin.PULL_UP)
-    button_reset1 = Pin(33, Pin.IN, Pin.PULL_UP)
-    button_reset10 = Pin(25, Pin.IN, Pin.PULL_UP)
+    button_increment = Pin(26, Pin.IN, Pin.PULL_UP)
+    button_decrement = Pin(27, Pin.IN, Pin.PULL_UP)
+    button_reset1 = Pin(14, Pin.IN, Pin.PULL_UP)
+    button_reset10 = Pin(12, Pin.IN, Pin.PULL_UP)
     led_red = Pin(4, Pin.OUT)  # GPIO para el LED Rojo
     led_green = Pin(2, Pin.OUT)  # GPIO para el LED Verde
     led_blue = Pin(15, Pin.OUT)  # GPIO para el LED Azul
@@ -62,7 +62,7 @@ else:
 # Configuración inicial
 NTaylor = 1
 angle = 0  # Ángulo en grados
-url = "http://192.168.56.146//PHPTemp.php"  # Reemplaza con la URL correcta
+url = "http:// 192.168.208.146//PHPTemp.php"  # Reemplaza con la URL correcta
 data_sent = False  # Bandera para verificar si se ha enviado el dato
 last_button_press = utime.ticks_ms()
 
@@ -158,3 +158,4 @@ while True:
     if not data_sent:
         send_data()
         data_sent = True  # Marcar como enviados para no repetir hasta nueva pulsación
+

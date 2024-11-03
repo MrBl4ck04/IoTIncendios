@@ -15,6 +15,7 @@ try {
     $data = json_decode($json, true);
 
     // Verificar que los datos JSON contengan las claves necesarias
+    //proyeccion a futuro
 if (isset($data['Cos_Taylor'])) {  // Cambia 'valor' por 'Cos_Taylor'
     // Definir la fecha y la hora actuales
     $fecha = date('Y-m-d');

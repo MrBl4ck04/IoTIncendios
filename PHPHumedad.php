@@ -15,7 +15,7 @@ try {
     $data = json_decode($json, true);
 
     // Verificar que los datos JSON contengan las claves necesarias
-if (isset($data['Cos_Taylor'])) {  // Cambia 'valor' por 'Cos_Taylor'
+if (isset($data['Tan_Taylor'])) {  // Cambia 'valor' por 'Tan_Taylor'
     // Definir la fecha y la hora actuales
     $fecha = date('Y-m-d');
     $hora = date('H:i:s');
@@ -24,11 +24,11 @@ if (isset($data['Cos_Taylor'])) {  // Cambia 'valor' por 'Cos_Taylor'
     $stmt = $conn->prepare("INSERT INTO humedad (fecha, hora, valor) VALUES (:fecha, :hora, :valor)");
     $stmt->bindParam(':fecha', $fecha);
     $stmt->bindParam(':hora', $hora);
-    $stmt->bindParam(':valor', $data['Cos_Taylor']);  // Cambia 'valor' por 'Cos_Taylor'
+    $stmt->bindParam(':valor', $data['Tan_Taylor']);  // Cambia 'valor' por 'Tan_Taylor'
 
     // Ejecutar la consulta
     if ($stmt->execute()) {
-        echo json_encode(["message" => "Dato de temperatura insertado exitosamente"]);
+        echo json_encode(["message" => "Dato de humedad insertado exitosamente"]);
     } else {
         echo json_encode(["message" => "Error al insertar el dato de temperatura"]);
     }

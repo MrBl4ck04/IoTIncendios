@@ -51,22 +51,21 @@ print("Tarjeta Detectada: " + BOARD_TYPE)
 # Configuración de los pines según la tarjeta detectada
 if BOARD_TYPE == Board.BoardType.ESP32:
     led = Pin(2, Pin.OUT)  # GPIO 2 para el ESP32 (LED integrado)
-    button_increment = machine.Pin(35, machine.Pin.IN, machine.Pin.PULL_UP)
-    button_decrement = machine.Pin(32, machine.Pin.IN, machine.Pin.PULL_UP)
-    button_reset1 = machine.Pin(33, machine.Pin.IN, machine.Pin.PULL_UP)
-    button_reset10 = machine.Pin(25, machine.Pin.IN, machine.Pin.PULL_UP)
-    led_red = machine.Pin(4, machine.Pin.OUT)  # GPIO para el LED Rojo
-    led_green = machine.Pin(2, machine.Pin.OUT)  # GPIO para el LED Verde
-    led_blue = machine.Pin(15, machine.Pin.OUT)  # GPIO para el LED Azul
+    button_increment = Pin(26, Pin.IN, Pin.PULL_UP)
+    button_decrement = Pin(27, Pin.IN, Pin.PULL_UP)
+    button_reset1 = Pin(14, Pin.IN, Pin.PULL_UP)
+    button_reset10 = Pin(12, Pin.IN, Pin.PULL_UP)
+    led_red = Pin(4, Pin.OUT)  # GPIO para el LED Rojo
+    led_green = Pin(2, Pin.OUT)  # GPIO para el LED Verde
+    led_blue = Pin(15, Pin.OUT)  # GPIO para el LED Azul
 else:
     print("Placa desconocida o no soportada para este ejemplo.")
     sys.exit()
-
 # Configuración inicial
 NTaylor = 1
 RGB = 1
 angle = 0  # Ángulo en grados
-url = "http://192.168.56.146//PHPTemp.php"  # Reemplaza con la URL correcta
+url = "http://192.168.208.146//PHPHumedad.php"  # Reemplaza con la URL correcta
 data_sent = False  # Bandera para verificar si se ha enviado el dato
 last_button_press = utime.ticks_ms()
 
@@ -88,16 +87,22 @@ def calculate_rgb(N):
         led_blue.value(1)
         return 3
 
-# Función para calcular la exponencial usando la serie de Taylor
-def calculate_exp_taylor(x, n):
-    result = 1  # e^0 = 1
-    factorial = 1
-    power = 1  # x^0
-    for i in range(1, n):
-        factorial *= i  # Calcula i! para el siguiente término
-        power *= x  # Aumenta el exponente
-        result += power / factorial  # Suma el siguiente término de la serie
-    return result
+# Función para calcular la tangente usando la serie de Taylor
+def calculate_tan_taylor(x, n):
+    # La tangente es sin(x)/cos(x), así que primero se calcula seno y coseno
+    sin_taylor = 0
+    cos_taylor = 0
+    for i in range(n):
+        # Calcular seno usando Taylor: x - x^3/3! + x^5/5! - x^7/7! + ...
+        sin_taylor += ((-1) ** i) * (x ** (2 * i + 1)) / math.factorial(2 * i + 1)
+
+        # Calcular coseno usando Taylor: 1 - x^2/2! + x^4/4! - x^6/6! + ...
+        cos_taylor += ((-1) ** i) * (x ** (2 * i)) / math.factorial(2 * i)
+
+    if cos_taylor != 0:
+        return sin_taylor / cos_taylor
+    else:
+        return float('inf')  # Si el coseno es 0, la tangente es indefinida
 
 # Función para manejar la pulsación de botones
 def handle_buttons():
@@ -134,18 +139,18 @@ def send_data():
         # Convertir ángulo a radianes para el cálculo
         angle_rad = math.radians(angle)
 
-        # Calcular valores de exponencial
-        exp_taylor_value = calculate_exp_taylor(angle_rad, NTaylor)
-        exp_trig_value = math.exp(angle_rad)  # Usar math.exp para el valor exponencial
-        error_value = abs(exp_taylor_value - exp_trig_value)
+        # Calcular valores de tangente
+        tan_taylor_value = calculate_tan_taylor(angle_rad, NTaylor)
+        tan_trig_value = math.tan(angle_rad)  # Usar math.tan para el valor tangente
+        error_value = abs(tan_taylor_value - tan_trig_value)
 
         # Calcular RGB basado en NTaylor
         RGB = calculate_rgb(NTaylor)
 
         # Crear el JSON para enviar
         data = {
-            "Exp_Taylor": exp_taylor_value,
-            "Exp_Trig": exp_trig_value,
+            "Tan_Taylor": tan_taylor_value,
+            "Tan_Trig": tan_trig_value,
             "Error": error_value,
             "RGB": RGB,
             "NTaylor": NTaylor
@@ -178,3 +183,4 @@ while True:
     if not data_sent:
         send_data()
         data_sent = True  # Marcar como enviados para no repetir hasta nueva pulsación
+
