@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import font
 import mysql.connector
+import subprocess 
 
 # Conexión a la base de datos MySQL
 conn = mysql.connector.connect(
@@ -27,6 +28,8 @@ def login():
 
     if result:
         messagebox.showinfo("Inicio de sesión exitoso", f"Bienvenido, {username}!")
+        subprocess.Popen(["python", "usersABM.py"])  # Abre el archivo userABM.py
+        root.destroy()
     else:
         messagebox.showerror("Error de inicio de sesión", "Usuario o contraseña incorrectos.")
 

@@ -148,6 +148,13 @@ def mostrar_usuarios():
 
         btn_eliminar = tk.Button(botones_frame, text="Eliminar", command=lambda id=usuario[0]: eliminar_usuario(id), bg="#FF5733", fg="white", font=('Arial', 6, 'bold'))
         btn_eliminar.pack(side=tk.LEFT, padx=5, pady=5)
+# Función para abrir la ventana de "Dashboard"
+def abrir_dashboard():
+    messagebox.showinfo("Dashboard", "Aquí se abrirá la ventana de Dashboard.")
+
+# Función para abrir la ventana de "Datos"
+def abrir_datos():
+    messagebox.showinfo("Datos", "Aquí se abrirá la ventana de Datos.")
 
 # Ventana principal
 root = tk.Tk()
@@ -158,6 +165,19 @@ root.configure(bg="#2d2d2d")
 title_font = font.Font(family="Helvetica", size=24, weight="bold")
 title_label = tk.Label(root, text="🔥 On Fire - Gestión de Usuarios 🔥", font=title_font, fg="#FF5733", bg="#2d2d2d")
 title_label.pack(padx=20, pady=20)
+
+# Botones de navegación
+btn_dashboard = tk.Button(
+    root, text="Dashboard", command=abrir_dashboard, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
+    activebackground="#C70039"
+)
+btn_dashboard.pack(pady=10)
+
+btn_datos = tk.Button(
+    root, text="Datos", command=abrir_datos, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
+    activebackground="#C70039"
+)
+btn_datos.pack(pady=10)
 
 btn_usuarios = tk.Button(
     root, text="Usuarios", command=mostrar_usuarios, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat",
