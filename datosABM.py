@@ -111,16 +111,21 @@ def mostrar_datos_sensor(sensor):
         btn_guardar = tk.Button(modificar_win, text="Guardar cambios", command=guardar_modificacion, bg="#FF5733", fg="white", font=('Arial', 11, 'bold'), relief="raised", bd=5)
         btn_guardar.grid(row=1, column=0, columnspan=2, pady=10)
 
-    # Agregar botones de modificar y eliminar
-    for item in tree.get_children():
-        item_values = tree.item(item, 'values')
-        dato_id = item_values[0]
-        
-        btn_modificar = tk.Button(frame, text="Modificar", command=lambda id=dato_id: modificar_dato(id), bg="#2082AA", fg="white", font=('Arial', 6, 'bold'))
-        btn_modificar.pack(side=tk.LEFT, padx=5, pady=5)
+    # Crear menú contextual
+    menu_contextual = tk.Menu(sensor_win, tearoff=0)
+    menu_contextual.add_command(label="Modificar", command=lambda: modificar_dato(selected_id))
+    menu_contextual.add_command(label="Eliminar", command=lambda: eliminar_dato(selected_id))
 
-        btn_eliminar = tk.Button(frame, text="Eliminar", command=lambda id=dato_id: eliminar_dato(id), bg="#FF5733", fg="white", font=('Arial', 6, 'bold'))
-        btn_eliminar.pack(side=tk.LEFT, padx=5, pady=5)
+    # Función para mostrar el menú contextual
+    def mostrar_menu(event):
+        item = tree.identify_row(event.y)
+        if item:
+            global selected_id
+            selected_id = tree.item(item, "values")[0]
+            menu_contextual.post(event.x_root, event.y_root)
+
+    # Asignar el evento de clic derecho a la tabla
+    tree.bind("<Button-3>", mostrar_menu)
 
 # Función para agregar un nuevo dato
 def agregar_dato(sensor):
@@ -155,12 +160,12 @@ def agregar_dato(sensor):
 
 # Ventana principal
 root = tk.Tk()
-root.title("On Fire - Gestión de Sensores")
+root.title("On Fire - Gestión de Datos y Sensores")
 root.configure(bg="#2d2d2d")
 
 # Título estilizado
 title_font = font.Font(family="Helvetica", size=24, weight="bold")
-title_label = tk.Label(root, text="🔥 On Fire - Gestión de Sensores 🔥", font=title_font, fg="#FF5733", bg="#2d2d2d")
+title_label = tk.Label(root, text="🔥 On Fire - Gestión de Datos y Sensores 🔥", font=title_font, fg="#FF5733", bg="#2d2d2d")
 title_label.pack(padx=20, pady=20)
 
 # Botones para cada sensor
