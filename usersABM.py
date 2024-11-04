@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, font
 import mysql.connector
+import subprocess
+
 
 # Conectar a la base de datos MySQL
 conn = mysql.connector.connect(
@@ -154,7 +156,11 @@ def abrir_dashboard():
 
 # Función para abrir la ventana de "Datos"
 def abrir_datos():
-    messagebox.showinfo("Datos", "Aquí se abrirá la ventana de Datos.")
+    try:
+        subprocess.Popen(["python", "datosABM.py"])
+    except Exception as e:
+        messagebox.showerror("Error", f"No se pudo abrir la ventana de datos: {e}")
+
 
 # Ventana principal
 root = tk.Tk()
@@ -163,7 +169,7 @@ root.configure(bg="#2d2d2d")
 
 # Título estilizado
 title_font = font.Font(family="Helvetica", size=24, weight="bold")
-title_label = tk.Label(root, text="🔥 On Fire - Gestión de Usuarios 🔥", font=title_font, fg="#FF5733", bg="#2d2d2d")
+title_label = tk.Label(root, text="🔥 On Fire - Gestión 🔥", font=title_font, fg="#FF5733", bg="#2d2d2d")
 title_label.pack(padx=20, pady=20)
 
 # Botones de navegación
