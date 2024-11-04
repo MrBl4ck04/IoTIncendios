@@ -151,8 +151,30 @@ def mostrar_usuarios():
         btn_eliminar = tk.Button(botones_frame, text="Eliminar", command=lambda id=usuario[0]: eliminar_usuario(id), bg="#FF5733", fg="white", font=('Arial', 6, 'bold'))
         btn_eliminar.pack(side=tk.LEFT, padx=5, pady=5)
 # Función para abrir la ventana de "Dashboard"
-def abrir_dashboard():
-    messagebox.showinfo("Dashboard", "Aquí se abrirá la ventana de Dashboard.")
+def abrir_dashboardCEO2():
+    try:
+        subprocess.Popen(["python", "DashCEO2.py"])
+    except Exception as e:
+        messagebox.showerror("Error", f"No se pudo abrir la ventana de datos: {e}")
+
+def abrir_dashboardHumedad():
+    try:
+        subprocess.Popen(["python", "DashHumedad.py"])
+    except Exception as e:
+        messagebox.showerror("Error", f"No se pudo abrir la ventana de datos: {e}")
+
+
+def abrir_dashboardHumo():
+    try:
+        subprocess.Popen(["python", "DashHumo.py"])
+    except Exception as e:
+        messagebox.showerror("Error", f"No se pudo abrir la ventana de datos: {e}")
+
+def abrir_dashboardTemp():
+    try:
+        subprocess.Popen(["python", "DashTemp.py"])
+    except Exception as e:
+        messagebox.showerror("Error", f"No se pudo abrir la ventana de datos: {e}")
 
 # Función para abrir la ventana de "Datos"
 def abrir_datos():
@@ -174,7 +196,25 @@ title_label.pack(padx=20, pady=20)
 
 # Botones de navegación
 btn_dashboard = tk.Button(
-    root, text="Dashboard", command=abrir_dashboard, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
+    root, text="Dashboard CO2", command=abrir_dashboardCEO2, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
+    activebackground="#C70039"
+)
+btn_dashboard.pack(pady=10)
+
+btn_dashboard = tk.Button(
+    root, text="Dashboard Humedad", command=abrir_dashboardHumedad, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
+    activebackground="#C70039"
+)
+btn_dashboard.pack(pady=10)
+
+btn_dashboard = tk.Button(
+    root, text="Dashboard Humo", command=abrir_dashboardHumo, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
+    activebackground="#C70039"
+)
+btn_dashboard.pack(pady=10)
+
+btn_dashboard = tk.Button(
+    root, text="Dashboard Temperatura", command=abrir_dashboardTemp, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
     activebackground="#C70039"
 )
 btn_dashboard.pack(pady=10)
