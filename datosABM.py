@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import font
-from tkinter import ttk, messagebox, filedialog
+from tkinter import ttk, messagebox, filedialog, simpledialog
 import mysql.connector
 import csv
 
@@ -17,8 +17,9 @@ cursor = conn.cursor()
 sensor_win = None
 modificar_win = None
 agregar_win = None
+botones_sensores = {}
 
-# Función para seleccionar sensor y mostrar sus datos
+# Función para mostrar datos del sensor
 def mostrar_datos_sensor(sensor):
     global sensor_win
     if sensor_win is not None:
@@ -34,7 +35,7 @@ def mostrar_datos_sensor(sensor):
     btn_agregar = tk.Button(sensor_win, text="Agregar Dato", command=lambda: agregar_dato(sensor), bg="#FF5733", fg="white", font=('Arial', 11, 'bold'), relief="raised", bd=5)
     btn_agregar.pack(pady=10)
 
-    # Crear tabla
+    # Crear tabla para mostrar datos
     cols = ("ID", "Fecha", "Hora", "Valor")
     tree = ttk.Treeview(frame, columns=cols, show='headings')
 
@@ -111,12 +112,11 @@ def mostrar_datos_sensor(sensor):
         btn_guardar = tk.Button(modificar_win, text="Guardar cambios", command=guardar_modificacion, bg="#FF5733", fg="white", font=('Arial', 11, 'bold'), relief="raised", bd=5)
         btn_guardar.grid(row=1, column=0, columnspan=2, pady=10)
 
-    # Crear menú contextual
+    # Crear menú contextual para la modificación y eliminación de datos
     menu_contextual = tk.Menu(sensor_win, tearoff=0)
     menu_contextual.add_command(label="Modificar", command=lambda: modificar_dato(selected_id))
     menu_contextual.add_command(label="Eliminar", command=lambda: eliminar_dato(selected_id))
 
-    # Función para mostrar el menú contextual
     def mostrar_menu(event):
         item = tree.identify_row(event.y)
         if item:
@@ -124,7 +124,6 @@ def mostrar_datos_sensor(sensor):
             selected_id = tree.item(item, "values")[0]
             menu_contextual.post(event.x_root, event.y_root)
 
-    # Asignar el evento de clic derecho a la tabla
     tree.bind("<Button-3>", mostrar_menu)
 
 # Función para agregar un nuevo dato
@@ -158,22 +157,85 @@ def agregar_dato(sensor):
     btn_guardar = tk.Button(agregar_win, text="Guardar Dato", command=guardar_dato, bg="#FF5733", fg="white", font=('Arial', 11, 'bold'), relief="raised", bd=5)
     btn_guardar.grid(row=1, column=0, columnspan=2, pady=10)
 
-# Ventana principal
+# Funciones ABM de sensores (agregar, modificar, eliminar)
+def crear_sensor():
+    sensor_nombre = simpledialog.askstring("Agregar Sensor", "Ingrese el nombre del nuevo sensor:")
+    if sensor_nombre:
+        try:
+            cursor.execute(f"""
+                CREATE TABLE {sensor_nombre} (
+                    id INT NOT NULL AUTO_INCREMENT,
+                    fecha DATE NOT NULL,
+                    hora TIME NOT NULL,
+                    valor DOUBLE(30,3) NOT NULL,
+                    PRIMARY KEY (id)
+                )
+            """)
+            conn.commit()
+            agregar_boton_sensor(sensor_nombre)
+            messagebox.showinfo("Éxito", f"Sensor '{sensor_nombre}' creado exitosamente.")
+        except mysql.connector.Error as e:
+            messagebox.showerror("Error", f"No se pudo crear el sensor: {e}")
+
+def modificar_sensor():
+    sensor_nombre = simpledialog.askstring("Modificar Sensor", "Ingrese el nombre del sensor a modificar:")
+    if sensor_nombre:
+        nueva_columna = simpledialog.askstring("Modificar Sensor", "Ingrese el nombre de la nueva columna (opcional):")
+        if nueva_columna:
+            cursor.execute(f"ALTER TABLE {sensor_nombre} ADD COLUMN {nueva_columna} DOUBLE(30,3)")
+            conn.commit()
+            messagebox.showinfo("Éxito", f"Columna '{nueva_columna}' añadida al sensor '{sensor_nombre}'.")
+
+def eliminar_sensor():
+    sensor_nombre = simpledialog.askstring("Eliminar Sensor", "Ingrese el nombre del sensor a eliminar:")
+    if sensor_nombre:
+        if messagebox.askyesno("Confirmar", f"¿Estás seguro de que deseas eliminar el sensor '{sensor_nombre}' y todos sus datos?"):
+            cursor.execute(f"DROP TABLE {sensor_nombre}")
+            conn.commit()
+            if sensor_nombre in botones_sensores:
+                botones_sensores[sensor_nombre].destroy()
+                del botones_sensores[sensor_nombre]
+            messagebox.showinfo("Éxito", f"Sensor '{sensor_nombre}' eliminado exitosamente.")
+
+# Agregar botones de sensores a la ventana principal
+def agregar_boton_sensor(sensor):
+    btn_sensor = tk.Button(frame_sensores, text=sensor.capitalize(), command=lambda: mostrar_datos_sensor(sensor), bg="#5e17eb", fg="white", font=('Arial', 12, 'bold'))
+    btn_sensor.pack(pady=5)
+    botones_sensores[sensor] = btn_sensor
+
+# Cargar todos los sensores y agregar sus botones, excluyendo la tabla 'usuarios'
+def cargar_sensores():
+    cursor.execute("SHOW TABLES")
+    sensores = [row[0] for row in cursor.fetchall() if row[0] != "usuarios"]
+    for sensor in sensores:
+        agregar_boton_sensor(sensor)
+
+# Crear interfaz principal
 root = tk.Tk()
-root.title("On Fire - Gestión de Datos y Sensores")
+root.title("Gestión de Sensores y Datos")
+root.geometry("600x600")
 root.configure(bg="#2d2d2d")
 
 # Título estilizado
-title_font = font.Font(family="Helvetica", size=24, weight="bold")
+title_font = font.Font(family="Helvetica", size=18, weight="bold")
 title_label = tk.Label(root, text="🔥 On Fire - Gestión de Datos y Sensores 🔥", font=title_font, fg="#FF5733", bg="#2d2d2d")
 title_label.pack(padx=20, pady=20)
 
-# Botones para cada sensor
-for sensor in ["co2", "humedad", "humo", "temperatura"]:
-    btn_sensor = tk.Button(
-        root, text=f"Datos de {sensor.capitalize()}", command=lambda s=sensor: mostrar_datos_sensor(s),
-        bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", activebackground="#C70039"
-    )
-    btn_sensor.pack(pady=10)
+frame_principal = tk.Frame(root, bg="#2d2d2d")
+frame_principal.pack(pady=10)
+
+btn_crear_sensor = tk.Button(frame_principal, text="Crear Sensor", command=crear_sensor, bg="#FF5733", fg="white", font=('Arial', 11, 'bold'))
+btn_crear_sensor.pack(side=tk.LEFT, padx=5, pady=5)
+
+btn_modificar_sensor = tk.Button(frame_principal, text="Modificar Sensor", command=modificar_sensor, bg="#FF5733", fg="white", font=('Arial', 11, 'bold'))
+btn_modificar_sensor.pack(side=tk.LEFT, padx=5, pady=5)
+
+btn_eliminar_sensor = tk.Button(frame_principal, text="Eliminar Sensor", command=eliminar_sensor, bg="#FF5733", fg="white", font=('Arial', 11, 'bold'))
+btn_eliminar_sensor.pack(side=tk.LEFT, padx=5, pady=5)
+
+frame_sensores = tk.Frame(root, bg="#2d2d2d", padx=10, pady=10)
+frame_sensores.pack(expand=True, fill='both')
+
+cargar_sensores()
 
 root.mainloop()
