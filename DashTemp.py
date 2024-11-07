@@ -1,13 +1,14 @@
 import pandas as pd
 import mysql.connector
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 # Configuración de la base de datos
 db_config = {
-    'host': 'localhost',   # Cambia si tu servidor MySQL está en otra dirección
-    'user': 'root',        # Cambia esto por tu usuario MySQL
-    'password': '',        # Cambia esto por tu contraseña MySQL
-    'database': 'onfirebd'  # Cambia esto por el nombre de tu base de datos
+    'host': 'localhost',   
+    'user': 'root',        
+    'password': '',        
+    'database': 'onfirebd'  
 }
 
 # Conectar a la base de datos MySQL
@@ -42,5 +43,8 @@ plt.ylabel('Valor de Temperatura')
 plt.legend()
 plt.grid(True)
 
+# Ajustar el formato de la fecha y hora en el eje x
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+plt.gcf().autofmt_xdate()  # Rotar las etiquetas de fecha para mejor visualización
 # Mostrar el gráfico
 plt.show()
