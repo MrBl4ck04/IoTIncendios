@@ -15,7 +15,6 @@ from Wifi_lib import wifi_init, get_html  # Librerías externas
 # Inicializar la conexión Wi-Fi
 wifi_init()
 
-# Detectar el tipo de tarjeta
 class Board:
     class BoardType:
         PICO_W = 'Raspberry Pi Pico W'
@@ -81,17 +80,14 @@ def calculate_rgb(N):
         led_red.value(1)
         led_green.value(0)
         led_blue.value(0)
-        return 1
     elif N <= 7:
         led_red.value(0)
         led_green.value(1)
         led_blue.value(0)
-        return 2
     else:
         led_red.value(0)
         led_green.value(0)
         led_blue.value(1)
-        return 3
 
 # Función para calcular la tangente usando la serie de Taylor
 def calculate_tangent_taylor(x, n):
@@ -106,9 +102,9 @@ def calculate_tangent_taylor(x, n):
 
 # Función para obtener la fecha y la hora actuales en MicroPython
 def get_current_datetime():
-    now = time.localtime()  # Obtiene el tiempo actual en forma de tupla
-    fecha = f"{now[0]:04d}-{now[1]:02d}-{now[2]:02d}"  # Formato YYYY-MM-DD
-    hora = f"{now[3]:02d}:{now[4]:02d}:{now[5]:02d}"  # Formato HH:MM:SS
+    now = time.localtime()
+    fecha = f"{now[0]:04d}-{now[1]:02d}-{now[2]:02d}"
+    hora = f"{now[3]:02d}:{now[4]:02d}:{now[5]:02d}"
     return fecha, hora
 
 # Función para enviar datos a todas las tablas
@@ -116,18 +112,12 @@ def send_data():
     global angle, NTaylor
 
     for i in range(10):  # Enviar 10 valores diferentes a cada tabla
-        # Convertir ángulo a radianes para el cálculo
         angle_rad = math.radians(angle)
-
         tangent_value = calculate_tangent_taylor(10 * (i + 1), NTaylor)
+        calculate_rgb(NTaylor)
 
-        # Calcular RGB basado en NTaylor
-        RGB = calculate_rgb(NTaylor)
-
-        # Obtener la fecha y la hora actuales
         fecha, hora = get_current_datetime()
 
-        # Crear y enviar datos a todas las tablas
         for table in urls.keys():
             data = {
                 "valor": tangent_value,
@@ -135,7 +125,7 @@ def send_data():
                 "hora": hora
             }
             headers = {'Content-Type': 'application/json'}
-            response = None  # Inicializa response fuera del try
+            response = None
 
             try:
                 response = requests.post(urls[table], data=ujson.dumps(data), headers=headers)
@@ -143,14 +133,18 @@ def send_data():
             except Exception as e:
                 print(f"Error de conexión con {table}: {str(e)}")
             finally:
-                # Solo cerramos la respuesta si ha sido creada
                 if response:
                     response.close()
 
-        # Incrementar ángulo de 0 a 360
-        angle = (angle + 10) % 360
+        # Parpadeo del LED por cada envío
+        led.value(1)
+        time.sleep(0.1)
+        led.value(0)
         time.sleep(0.1)
 
+        # Incrementar el ángulo
+        angle = (angle + 10) % 360
+        time.sleep(0.1)
 
 # Función para manejar la pulsación de botones
 def handle_buttons():
@@ -160,26 +154,30 @@ def handle_buttons():
     if utime.ticks_diff(current_time, last_button_press) > 200:
         if not button_increment.value():
             NTaylor += 1
-            print("EJECUTANDO ORDEN: Incremento de NTaylor")
+            print("Incremento de NTaylor")
             last_button_press = current_time
         elif not button_decrement.value():
             NTaylor = max(1, NTaylor - 1)
-            print("EJECUTANDO ORDEN: Decremento de NTaylor")
+            print("Decremento de NTaylor")
             last_button_press = current_time
         elif not button_reset1.value():
             NTaylor = 1
-            print("EJECUTANDO ORDEN: Reset a NTaylor = 1")
+            print("Reset NTaylor a 1")
             last_button_press = current_time
         elif not button_reset10.value():
             NTaylor = 10
-            print("EJECUTANDO ORDEN: Reset a NTaylor = 10")
+            print("Reset NTaylor a 10")
             last_button_press = current_time
 
 # Bucle principal
 while True:
-    # Manejar pulsaciones de botones
-    handle_buttons()
-
-    # Enviar datos a todas las tablas de forma concurrente
+    # Enviar 10 datos y pausar
     send_data()
+
+    # Esperar pulsación de botón para ajustar NTaylor
+    while True:
+        handle_buttons()
+        # Esperar hasta detectar un cambio en NTaylor antes de volver a enviar datos
+        if not button_increment.value() or not button_decrement.value() or not button_reset1.value() or not button_reset10.value():
+            break
 
