@@ -22,7 +22,7 @@ def mostrar_microcontroladores():
     if microcontroladores_win is not None:
         microcontroladores_win.destroy()
 
-    microcontroladores_win = tk.Toplevel(root)
+    microcontroladores_win = tk.Toplevel()
     microcontroladores_win.title("Gestión de Microcontroladores")
     microcontroladores_win.geometry("600x400")
     microcontroladores_win.configure(bg="#2d2d2d")
@@ -76,7 +76,7 @@ def agregar_microcontrolador():
     if agregar_micro_win is not None:
         agregar_micro_win.destroy()
 
-    agregar_micro_win = tk.Toplevel(root)
+    agregar_micro_win = tk.Toplevel()
     agregar_micro_win.title("Agregar Microcontrolador")
     agregar_micro_win.configure(bg="#2d2d2d")
 
@@ -139,7 +139,7 @@ def modificar_microcontrolador():
     if modificar_micro_win is not None:
         modificar_micro_win.destroy()
 
-    modificar_micro_win = tk.Toplevel(root)
+    modificar_micro_win = tk.Toplevel()
     modificar_micro_win.title("Modificar Microcontrolador")
     modificar_micro_win.configure(bg="#2d2d2d")
 
@@ -175,10 +175,4 @@ def modificar_microcontrolador():
     btn_guardar = tk.Button(modificar_micro_win, text="Guardar Cambios", command=guardar_cambios, bg="#FF5733", fg="white", font=('Arial', 11, 'bold'))
     btn_guardar.grid(row=2, column=0, columnspan=2, pady=10)
 
-# Ejecutar la aplicación
-root = tk.Tk()
-root.title("Gestión de Microcontroladores")
-root.geometry("600x400")
-root.configure(bg="#2d2d2d")
-mostrar_microcontroladores()
-root.mainloop()
+#mostrar_microcontroladores()

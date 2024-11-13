@@ -22,7 +22,7 @@ def mostrar_sensores():
     if sensores_win is not None:
         sensores_win.destroy()
 
-    sensores_win = tk.Toplevel(root)
+    sensores_win = tk.Toplevel()
     sensores_win.title("Gestión de Sensores")
     sensores_win.geometry("600x400")
     sensores_win.configure(bg="#2d2d2d")
@@ -72,7 +72,7 @@ def agregar_sensor():
     if agregar_sensor_win is not None:
         agregar_sensor_win.destroy()
 
-    agregar_sensor_win = tk.Toplevel(root)
+    agregar_sensor_win = tk.Toplevel()
     agregar_sensor_win.title("Agregar Sensor")
     agregar_sensor_win.configure(bg="#2d2d2d")
 
@@ -126,7 +126,7 @@ def modificar_sensor():
     if modificar_sensor_win is not None:
         modificar_sensor_win.destroy()
 
-    modificar_sensor_win = tk.Toplevel(root)
+    modificar_sensor_win = tk.Toplevel()
     modificar_sensor_win.title("Modificar Sensor")
     modificar_sensor_win.configure(bg="#2d2d2d")
 
@@ -164,10 +164,4 @@ def modificar_sensor():
     btn_guardar = tk.Button(modificar_sensor_win, text="Guardar Cambios", command=guardar_cambios, bg="#FF5733", fg="white", font=('Arial', 11, 'bold'))
     btn_guardar.grid(row=2, column=0, columnspan=2, pady=10)
 
-# Ejecutar la aplicación
-root = tk.Tk()
-root.title("Gestión de Sensores")
-root.geometry("600x400")
-root.configure(bg="#2d2d2d")
-mostrar_sensores()
-root.mainloop()
+#mostrar_sensores()
