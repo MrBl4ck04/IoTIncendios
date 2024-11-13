@@ -14,11 +14,11 @@ db_config = {
 # Conectar a la base de datos MySQL
 conn = mysql.connector.connect(**db_config)
 
-# Consulta SQL para unir lectura con sensores y obtener el tipo de sensor
+# Consulta SQL para unir lecturas con sensores y obtener el tipo de sensor
 query = """
-SELECT lectura.sensores_id, sensores.tipo, lectura.fecha, lectura.hora, lectura.valor
-FROM lectura
-JOIN sensores ON lectura.sensores_id = sensores.id
+SELECT lecturas.sensores_id, sensores.tipo, lecturas.fecha, lecturas.hora, lecturas.valor
+FROM lecturas
+JOIN sensores ON lecturas.sensores_id = sensores.id
 """
 data = pd.read_sql(query, conn)
 
