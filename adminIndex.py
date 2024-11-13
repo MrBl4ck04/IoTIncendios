@@ -74,17 +74,14 @@ title_label = tk.Label(root, text="🔥 On Fire - Gestión 🔥", font=title_fon
 title_label.pack(padx=20, pady=20)
 
 # Botones de navegación
-btn_sensores = tk.Button(root, text="Gestionar Sensores", command=gestionar_sensores,  bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
-    activebackground="#C70039")
-btn_sensores.pack(pady=10)
 
 btn_microcontroladores = tk.Button(root, text="Gestionar Microcontroladores", command=gestionar_microcontroladores,  bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
     activebackground="#C70039")
 btn_microcontroladores.pack(pady=10)
 
-btn_microcontroladores = tk.Button(root, text="Gestionar Usuarios", command=gestionar_usuarios,  bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
+btn_usuarios = tk.Button(root, text="Gestionar Usuarios", command=gestionar_usuarios,  bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
     activebackground="#C70039")
-btn_microcontroladores.pack(pady=10)
+btn_usuarios.pack(pady=10)
 
 
 # Botones de navegación
