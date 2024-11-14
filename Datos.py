@@ -74,6 +74,15 @@ NTaylor = 1
 angle = 0  # Ángulo en grados
 last_button_press = utime.ticks_ms()
 
+# Almacenar lecturas para el promedio móvil
+sensor_data = {
+    "co2": [],
+    "humedad": [],
+    "humo": [],
+    "temperatura": []
+}
+average_window = 5  # Número de muestras para el promedio móvil
+
 # Función para calcular el valor de RGB basado en NTaylor
 def calculate_rgb(N):
     if N <= 4:
@@ -144,6 +153,13 @@ def get_current_datetime():
     hora = f"{now[3]:02d}:{now[4]:02d}:{now[5]:02d}"
     return fecha, hora
 
+# Función para calcular el promedio móvil de las lecturas
+def moving_average(sensor, value):
+    sensor_data[sensor].append(value)
+    if len(sensor_data[sensor]) > average_window:
+        sensor_data[sensor].pop(0)
+    return sum(sensor_data[sensor]) / len(sensor_data[sensor])
+
 # Función para enviar datos a todas las tablas
 def send_data():
     global angle, NTaylor
@@ -162,8 +178,9 @@ def send_data():
 
         for table, func in functions.items():
             value = func(angle_rad, NTaylor)
+            smoothed_value = moving_average(table, value)  # Aplicar promedio móvil
             data = {
-                "valor": value,
+                "valor": smoothed_value,
                 "fecha": fecha,
                 "hora": hora
             }
@@ -223,4 +240,3 @@ while True:
         # Esperar hasta detectar un cambio en NTaylor antes de volver a enviar datos
         if not button_increment.value() or not button_decrement.value() or not button_reset1.value() or not button_reset10.value():
             break
-
