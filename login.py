@@ -28,7 +28,7 @@ def login():
 
     if result:
         messagebox.showinfo("Inicio de sesión exitoso", f"Bienvenido, {username}!")
-        subprocess.Popen(["python", "usersABM.py"])  # Abre el archivo userABM.py
+        subprocess.Popen(["python", "adminIndex.py"])  # Abre el archivo userABM.py
         root.destroy()
     else:
         messagebox.showerror("Error de inicio de sesión", "Usuario o contraseña incorrectos.")
