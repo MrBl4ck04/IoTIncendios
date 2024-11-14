@@ -1,7 +1,6 @@
 import pandas as pd
 import mysql.connector
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 
 # Configuración de la base de datos
 db_config = {
@@ -26,15 +25,7 @@ def get_sensor_data(query):
         conn = mysql.connector.connect(**db_config)
         data = pd.read_sql(query, conn)
         conn.close()
-
-        # Convertir fecha y hora a datetime
-        data['fecha'] = pd.to_datetime(data['fecha'], format='%Y-%m-%d', errors='coerce')
-        data['hora'] = pd.to_timedelta(data['hora'])
-        data['fecha_hora'] = data['fecha'] + data['hora']
-
-        # Eliminar filas con fechas inválidas
-        data = data.dropna(subset=['fecha_hora'])
-        return data.sort_values(by='fecha_hora')
+        return data
     except Exception as e:
         print(f"Error al procesar los datos: {e}")
         return pd.DataFrame()  # Retorna un DataFrame vacío si falla
@@ -66,18 +57,16 @@ for sensor, data in data_sensores.items():
     if not data.empty:
         merged_data = data.merge(ubicaciones, left_on='id_ubicacion', right_on='id', how='left')
         for ubicacion, group in merged_data.groupby('descripcion'):
-            plt.plot(group['fecha_hora'], group['valor'], label=f"{sensor.capitalize()} - {ubicacion}")
+            # Crear un índice para el eje X
+            index = range(len(group))
+            plt.plot(index, group['valor'], label=f"{sensor.capitalize()} - {ubicacion}")
 
 # Configuración del gráfico
 plt.title("Evolución de Sensores por Ubicación")
-plt.xlabel("Fecha y Hora")
+plt.xlabel("Mediciones (Índice)")
 plt.ylabel("Valor de los Sensores")
 plt.legend(loc="upper left", bbox_to_anchor=(1, 1), title="Sensores y Ubicaciones")
 plt.grid(True)
-
-# Formatear el eje X con fechas y horas
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
-plt.gcf().autofmt_xdate()  # Rotar etiquetas de fecha
 
 # Ajustar diseño para espacio adicional
 plt.tight_layout()

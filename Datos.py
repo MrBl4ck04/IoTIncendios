@@ -91,35 +91,51 @@ def calculate_rgb(N):
 
 # Función para calcular la tangente usando la serie de Taylor
 def calculate_tangent_taylor(x, n):
-    suma=0.0
-    for kk in range(0,n+1):
-        termino = (-1)**kk * (x**(2*kk+1) /(2*kk+1))
-        suma+=termino
-    return suma
+    result = 0
+    power = x
+    factorial = 1
+    for i in range(1, n + 1):
+        factorial *= (2 * i) * (2 * i + 1)
+        result += power / factorial
+        power *= x * x
+    return result
 
 # Función para calcular el seno usando la serie de Taylor
 def calculate_sine_taylor(x, n):
-    suma=0.0
-    for kk in range(0,n+1):
-        termino = (-1)**kk * x**(2*kk+1) / math.factorial(2*kk + 1)
-        suma+=termino
-    return suma
+    result = 0
+    power = x
+    factorial = 1
+    sign = 1
+    for i in range(1, n + 1):
+        factorial *= (2 * i - 1) * (2 * i) if i > 1 else 1
+        result += sign * power / factorial
+        power *= x * x
+        sign *= -1
+    return result
 
 # Función para calcular el coseno usando la serie de Taylor
 def calculate_cosine_taylor(x, n):
-    suma=0.0
-    for kk in range(0,n+1):
-        termino = (-1)**kk * x**(2*kk) / math.factorial(2*kk)
-        suma+=termino
-    return suma
+    result = 0
+    power = 1
+    factorial = 1
+    sign = 1
+    for i in range(n):
+        result += sign * power / factorial
+        power *= x * x
+        factorial *= (2 * i + 1) * (2 * i + 2) if i > 0 else 1
+        sign *= -1
+    return result
 
 # Función para calcular la exponencial usando la serie de Taylor
 def calculate_exponential_taylor(x, n):
-    suma=0.0
-    for kk in range(1,n+1):
-        termino = (-1)**(kk+1)* (((x-1)**kk )/ kk)
-        suma+=termino
-    return suma
+    result = 1
+    power = x
+    factorial = 1
+    for i in range(1, n + 1):
+        result += power / factorial
+        power *= x
+        factorial *= i
+    return result
 
 # Función para obtener la fecha y la hora actuales en MicroPython
 def get_current_datetime():
