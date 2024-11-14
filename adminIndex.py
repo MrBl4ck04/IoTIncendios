@@ -24,16 +24,22 @@ def gestionar_microcontroladores():
     admin_microcontroladores.mostrar_microcontroladores()  # Esto solo se ejecutará cuando se haga clic en el botón
 
 # Función para abrir la ventana de "Dashboard"
-def abrir_dashboard():
+def abrir_dashboard_Fecha():
     try:
-        subprocess.Popen(["python", "DashCEO2.py"]) #aca el nombre el archivo donde esta el python
+        subprocess.Popen(["python", "DashFechaValor.py"])
+    except Exception as e:
+        messagebox.showerror("Error", f"No se pudo abrir la ventana de dashboard: {e}")
+
+def abrir_dashboard_Ubi():
+    try:
+        subprocess.Popen(["python", "DashUbicacionValor.py"])
     except Exception as e:
         messagebox.showerror("Error", f"No se pudo abrir la ventana de dashboard: {e}")
 
 
 def abrir_datos():
     try:
-        subprocess.Popen(["python", "datosABM.py"]) #aca el nombre el archivo donde esta el python
+        subprocess.Popen(["python", "datosABM.py"]) 
     except Exception as e:
         messagebox.showerror("Error", f"No se pudo abrir la ventana de datos: {e}")
 
@@ -60,10 +66,16 @@ btn_usuarios.pack(pady=10)
 
 
 btn_dashboard = tk.Button(
-    root, text="Dashboard", command=abrir_dashboard, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
+    root, text="Dashboard por Fechas", command=abrir_dashboard_Fecha, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
+    activebackground="#C70039"
+)
+
+btn_dashboard2 = tk.Button(
+    root, text="Dashboard por Ubicacion", command=abrir_dashboard_Ubi, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
     activebackground="#C70039"
 )
 btn_dashboard.pack(pady=10)
+btn_dashboard2.pack(pady=10)
 
 
 btn_datos = tk.Button(
