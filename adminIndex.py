@@ -31,6 +31,13 @@ def abrir_dashboard():
         messagebox.showerror("Error", f"No se pudo abrir la ventana de dashboard: {e}")
 
 
+def abrir_datos():
+    try:
+        subprocess.Popen(["python", "datosABM.py"]) #aca el nombre el archivo donde esta el python
+    except Exception as e:
+        messagebox.showerror("Error", f"No se pudo abrir la ventana de datos: {e}")
+
+
 
 # Crear la ventana principal (root) del admin
 root = tk.Tk()
@@ -57,6 +64,13 @@ btn_dashboard = tk.Button(
     activebackground="#C70039"
 )
 btn_dashboard.pack(pady=10)
+
+
+btn_datos = tk.Button(
+    root, text="Gestionar Datos", command=abrir_datos, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
+    activebackground="#C70039"
+)
+btn_datos.pack(pady=10)
 
 
 # Ejecutar la aplicación
