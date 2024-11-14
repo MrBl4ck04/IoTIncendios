@@ -95,9 +95,46 @@ def calculate_tangent_taylor(x, n):
     power = x
     factorial = 1
     for i in range(1, n + 1):
-        factorial *= (2 * i) * (2 * i + 1)  # Factorial para la tangente
+        factorial *= (2 * i) * (2 * i + 1)
         result += power / factorial
-        power *= x * x  # Potencia de x
+        power *= x * x
+    return result
+
+# Función para calcular el seno usando la serie de Taylor
+def calculate_sine_taylor(x, n):
+    result = 0
+    power = x
+    factorial = 1
+    sign = 1
+    for i in range(1, n + 1):
+        factorial *= (2 * i - 1) * (2 * i) if i > 1 else 1
+        result += sign * power / factorial
+        power *= x * x
+        sign *= -1
+    return result
+
+# Función para calcular el coseno usando la serie de Taylor
+def calculate_cosine_taylor(x, n):
+    result = 0
+    power = 1
+    factorial = 1
+    sign = 1
+    for i in range(n):
+        result += sign * power / factorial
+        power *= x * x
+        factorial *= (2 * i + 1) * (2 * i + 2) if i > 0 else 1
+        sign *= -1
+    return result
+
+# Función para calcular la exponencial usando la serie de Taylor
+def calculate_exponential_taylor(x, n):
+    result = 1
+    power = x
+    factorial = 1
+    for i in range(1, n + 1):
+        result += power / factorial
+        power *= x
+        factorial *= i
     return result
 
 # Función para obtener la fecha y la hora actuales en MicroPython
@@ -113,14 +150,20 @@ def send_data():
 
     for i in range(10):  # Enviar 10 valores diferentes a cada tabla
         angle_rad = math.radians(angle)
-        tangent_value = calculate_tangent_taylor(10 * (i + 1), NTaylor)
+        functions = {
+            "co2": calculate_tangent_taylor,
+            "humedad": calculate_sine_taylor,
+            "humo": calculate_cosine_taylor,
+            "temperatura": calculate_exponential_taylor
+        }
         calculate_rgb(NTaylor)
 
         fecha, hora = get_current_datetime()
 
-        for table in urls.keys():
+        for table, func in functions.items():
+            value = func(angle_rad, NTaylor)
             data = {
-                "valor": tangent_value,
+                "valor": value,
                 "fecha": fecha,
                 "hora": hora
             }
