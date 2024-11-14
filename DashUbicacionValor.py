@@ -1,6 +1,7 @@
 import pandas as pd
 import mysql.connector
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 # Configuración de la base de datos
 db_config = {
@@ -10,66 +11,83 @@ db_config = {
     'database': 'onfirebd'
 }
 
-# Consultas SQL para los sensores y ubicaciones
+# Consultas SQL para los sensores con la descripción de ubicación
 queries = {
-    "co2": "SELECT fecha, hora, valor, id_ubicacion FROM co2",
-    "humedad": "SELECT fecha, hora, valor, id_ubicacion FROM humedad",
-    "humo": "SELECT fecha, hora, valor, id_ubicacion FROM humo",
-    "temperatura": "SELECT fecha, hora, valor, id_ubicacion FROM temperatura"
+    "co2": """
+        SELECT c.fecha, c.hora, c.valor, u.descripcion 
+        FROM co2 c
+        JOIN microcontroladores m ON c.microcontroladores_id = m.id
+        JOIN ubicaciones u ON m.ubicaciones_id = u.id
+        ORDER BY u.descripcion, c.fecha, c.hora
+    """,
+    "humedad": """
+        SELECT h.fecha, h.hora, h.valor, u.descripcion 
+        FROM humedad h
+        JOIN microcontroladores m ON h.microcontroladores_id = m.id
+        JOIN ubicaciones u ON m.ubicaciones_id = u.id
+        ORDER BY u.descripcion, h.fecha, h.hora
+    """,
+    "humo": """
+        SELECT h.fecha, h.hora, h.valor, u.descripcion 
+        FROM humo h
+        JOIN microcontroladores m ON h.microcontroladores_id = m.id
+        JOIN ubicaciones u ON m.ubicaciones_id = u.id
+        ORDER BY u.descripcion, h.fecha, h.hora
+    """,
+    "temperatura": """
+        SELECT t.fecha, t.hora, t.valor, u.descripcion 
+        FROM temperatura t
+        JOIN microcontroladores m ON t.microcontroladores_id = m.id
+        JOIN ubicaciones u ON m.ubicaciones_id = u.id
+        ORDER BY u.descripcion, t.fecha, t.hora
+    """
 }
-ubicaciones_query = "SELECT id, descripcion FROM ubicaciones"
 
-# Función para obtener datos de sensores
+# Función para obtener y procesar los datos de una tabla
 def get_sensor_data(query):
     try:
         conn = mysql.connector.connect(**db_config)
         data = pd.read_sql(query, conn)
         conn.close()
-        return data
+
+        # Convertir fecha y hora a datetime
+        data['fecha'] = pd.to_datetime(data['fecha'], format='%Y-%m-%d', errors='coerce')
+        data['hora'] = pd.to_timedelta(data['hora'])
+        data['fecha_hora'] = data['fecha'] + data['hora']
+
+        # Eliminar filas con fechas inválidas y ordenar los datos
+        data = data.dropna(subset=['fecha_hora'])
+        return data.sort_values(by='fecha_hora')
     except Exception as e:
         print(f"Error al procesar los datos: {e}")
         return pd.DataFrame()  # Retorna un DataFrame vacío si falla
 
-# Función para obtener ubicaciones
-def get_locations():
-    try:
-        conn = mysql.connector.connect(**db_config)
-        locations = pd.read_sql(ubicaciones_query, conn)
-        conn.close()
-        return locations
-    except Exception as e:
-        print(f"Error al obtener las ubicaciones: {e}")
-        return pd.DataFrame()
-
-# Obtener datos de sensores y ubicaciones
+# Leer y procesar los datos de cada sensor
 data_sensores = {sensor: get_sensor_data(query) for sensor, query in queries.items()}
-ubicaciones = get_locations()
 
-if ubicaciones.empty:
-    print("No se encontraron ubicaciones. Saliendo...")
-    exit()
-
-# Crear la figura para graficar
+# Crear una figura para graficar los datos
 plt.figure(figsize=(14, 8))
 
-# Graficar cada sensor con la etiqueta de ubicación
+# Graficar cada sensor
 for sensor, data in data_sensores.items():
     if not data.empty:
-        merged_data = data.merge(ubicaciones, left_on='id_ubicacion', right_on='id', how='left')
-        for ubicacion, group in merged_data.groupby('descripcion'):
-            # Crear un índice para el eje X
-            index = range(len(group))
-            plt.plot(index, group['valor'], label=f"{sensor.capitalize()} - {ubicacion}")
+        # Graficar cada ubicación
+        for ubicacion, group in data.groupby('descripcion'):
+            plt.plot(group['fecha_hora'], group['valor'], label=f"{sensor.capitalize()} - {ubicacion}")
+    else:
+        print(f"No se pudieron graficar datos para el sensor: {sensor}")
 
 # Configuración del gráfico
-plt.title("Evolución de Sensores por Ubicación")
-plt.xlabel("Mediciones (Índice)")
-plt.ylabel("Valor de los Sensores")
+plt.title('Evolución de los Sensores a lo largo del Tiempo por Ubicación')
+plt.xlabel('Fecha y Hora')
+plt.ylabel('Valores')
 plt.legend(loc="upper left", bbox_to_anchor=(1, 1), title="Sensores y Ubicaciones")
 plt.grid(True)
 
-# Ajustar diseño para espacio adicional
-plt.tight_layout()
+# Formatear el eje X con fechas y horas
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+plt.gcf().autofmt_xdate()  # Rotar etiquetas de fecha
 
 # Mostrar la gráfica
+plt.tight_layout()
 plt.show()
