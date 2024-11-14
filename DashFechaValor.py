@@ -3,7 +3,8 @@ import mysql.connector
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-# Configuración de la base de datos
+
+# Configuración de la conexión a la base de datos
 db_config = {
     'host': 'localhost',
     'user': 'root',
@@ -11,50 +12,48 @@ db_config = {
     'database': 'onfirebd'
 }
 
-# Conectar a la base de datos MySQL
-conn = mysql.connector.connect(**db_config)
+# Conectar a la base de datos
+try:
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor()
 
-# Consulta SQL para unir lecturas con sensores y obtener el tipo de sensor
-query = """
-SELECT lecturas.sensores_id, sensores.tipo, lecturas.fecha, lecturas.hora, lecturas.valor
-FROM lecturas
-JOIN sensores ON lecturas.sensores_id = sensores.id
-"""
-data = pd.read_sql(query, conn)
+    # Consultas para los cuatro sensores
+    queries = {
+        "co2": "SELECT fecha, hora, valor FROM co2 ORDER BY fecha, hora",
+        "humedad": "SELECT fecha, hora, valor FROM humedad ORDER BY fecha, hora",
+        "humo": "SELECT fecha, hora, valor FROM humo ORDER BY fecha, hora",
+        "temperatura": "SELECT fecha, hora, valor FROM temperatura ORDER BY fecha, hora"
+    }
 
-# Cerrar la conexión
-conn.close()
+    data = {}
+    for sensor, query in queries.items():
+        cursor.execute(query)
+        results = cursor.fetchall()
+        df = pd.DataFrame(results, columns=["fecha", "hora", "valor"])
+        df["datetime"] = pd.to_datetime(df["fecha"].astype(str) + " " + df["hora"].astype(str))
+        data[sensor] = df
 
-# Convertir fecha y hora en un solo campo de tipo datetime
-data['fecha'] = pd.to_datetime(data['fecha'], format='%Y-%m-%d', errors='coerce')
-data['hora'] = pd.to_timedelta(data['hora'])
-data['fecha_hora'] = data['fecha'] + data['hora']
+    # Cerrar la conexión
+    cursor.close()
+    conn.close()
 
-# Eliminar filas con fechas que no pudieron ser convertidas
-data = data.dropna(subset=['fecha_hora'])
+    # Graficar los datos
+    plt.figure(figsize=(12, 6))
 
-# Ordenar los datos por fecha y hora en caso de que estén desordenados
-data = data.sort_values(by='fecha_hora')
+    for sensor, df in data.items():
+        plt.plot(df["datetime"], df["valor"], label=sensor.capitalize())
 
-# Crear el gráfico
-plt.figure(figsize=(12, 8))
+    # Configuración de la gráfica
+    plt.title("Datos de Sensores")
+    plt.xlabel("Fecha y Hora")
+    plt.ylabel("Valor")
+    plt.legend()
+    plt.grid(True)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
 
-# Graficar una línea por cada tipo de sensor
-tipos = data['tipo'].unique()
-for tipo in tipos:
-    tipo_data = data[data['tipo'] == tipo]
-    plt.plot(tipo_data['fecha_hora'], tipo_data['valor'], label=f'Sensor {tipo}')
+    # Mostrar la gráfica
+    plt.show()
 
-# Configuración del gráfico
-plt.title('Evolución de Valores por Sensor a lo largo del Tiempo')
-plt.xlabel('Fecha y Hora')
-plt.ylabel('Valor')
-plt.legend(title="Sensores")
-plt.grid(True)
-
-# Ajustar el formato de la fecha y hora en el eje x
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
-plt.gcf().autofmt_xdate()  # Rotar las etiquetas de fecha para mejor visualización
-
-# Mostrar el gráfico
-plt.show()
+except mysql.connector.Error as err:
+    print(f"Error: {err}")
