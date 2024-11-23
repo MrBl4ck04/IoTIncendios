@@ -11,12 +11,17 @@ try {
     $json = file_get_contents('php://input');
     $data = json_decode($json, true);
 
-    if (isset($data['valor']) && isset($data['fecha']) && isset($data['hora'])) {
-        $stmt = $conn->prepare("INSERT INTO temperatura (fecha, hora, valor, microcontroladores_id) VALUES (:fecha, :hora, :valor, 1)");
-        $stmt->bindParam(':fecha', $data['fecha']);
-        $stmt->bindParam(':hora', $data['hora']);
+    if (isset($data['valor'])) {
+        $microcontroladores_id = rand(1, 2);
+
+        // Usar fecha y hora del servidor
+        $stmt = $conn->prepare("
+            INSERT INTO temperatura (fecha, hora, valor, microcontroladores_id)
+            VALUES (CURRENT_DATE(), CURRENT_TIME(), :valor, :microcontroladores_id)
+        ");
         $stmt->bindParam(':valor', $data['valor']);
-        
+        $stmt->bindParam(':microcontroladores_id', $microcontroladores_id);
+
         if ($stmt->execute()) {
             echo json_encode(["message" => "Dato insertado exitosamente"]);
         } else {
