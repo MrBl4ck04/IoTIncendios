@@ -116,14 +116,59 @@ def actualizar_ubicaciones(combobox):
 
 # Función para agregar una nueva ubicación
 def agregar_ubicacion(combobox=None):
-    nueva_ubicacion = simpledialog.askstring("Nueva Ubicación", "Ingrese la descripción de la nueva ubicación:")
-    if nueva_ubicacion:
-        cursor.execute("INSERT INTO ubicaciones (descripcion) VALUES (%s)", (nueva_ubicacion,))
-        conn.commit()
-        if combobox:
-            actualizar_ubicaciones(combobox)
-            combobox.set(nueva_ubicacion)
-        messagebox.showinfo("Éxito", "Ubicación agregada exitosamente.")
+    # Crear ventana para ingresar datos de la nueva ubicación
+    agregar_ubicacion_win = tk.Toplevel()
+    agregar_ubicacion_win.title("Agregar Ubicación")
+    agregar_ubicacion_win.configure(bg="#2d2d2d")
+    
+    # Entrada para descripción
+    tk.Label(agregar_ubicacion_win, text="Descripción", font=('Helvetica', 10), fg="white", bg="#2d2d2d").grid(row=0, column=0, padx=10, pady=10)
+    entry_descripcion = tk.Entry(agregar_ubicacion_win, font=('Helvetica', 10), width=20)
+    entry_descripcion.grid(row=0, column=1, padx=10, pady=10)
+    
+    # Entrada para latitud
+    tk.Label(agregar_ubicacion_win, text="Latitud", font=('Helvetica', 10), fg="white", bg="#2d2d2d").grid(row=1, column=0, padx=10, pady=10)
+    entry_latitud = tk.Entry(agregar_ubicacion_win, font=('Helvetica', 10), width=20)
+    entry_latitud.grid(row=1, column=1, padx=10, pady=10)
+    
+    # Entrada para longitud
+    tk.Label(agregar_ubicacion_win, text="Longitud", font=('Helvetica', 10), fg="white", bg="#2d2d2d").grid(row=2, column=0, padx=10, pady=10)
+    entry_longitud = tk.Entry(agregar_ubicacion_win, font=('Helvetica', 10), width=20)
+    entry_longitud.grid(row=2, column=1, padx=10, pady=10)
+    
+    # Función para guardar la ubicación en la base de datos
+    def guardar_ubicacion():
+        descripcion = entry_descripcion.get()
+        try:
+            latitud = float(entry_latitud.get())
+            longitud = float(entry_longitud.get())
+        except ValueError:
+            messagebox.showerror("Error", "La latitud y la longitud deben ser números válidos.")
+            return
+
+        if not descripcion:
+            messagebox.showwarning("Campos incompletos", "Por favor complete la descripción.")
+            return
+
+        # Insertar la nueva ubicación en la base de datos
+        try:
+            cursor.execute(
+                "INSERT INTO ubicaciones (descripcion, latitud, longitud) VALUES (%s, %s, %s)",
+                (descripcion, latitud, longitud)
+            )
+            conn.commit()
+            if combobox:
+                actualizar_ubicaciones(combobox)
+                combobox.set(descripcion)
+            messagebox.showinfo("Éxito", "Ubicación agregada exitosamente.")
+            agregar_ubicacion_win.destroy()
+        except mysql.connector.Error as err:
+            messagebox.showerror("Error", f"No se pudo agregar la ubicación: {err}")
+    
+    # Botón para guardar
+    btn_guardar = tk.Button(agregar_ubicacion_win, text="Guardar", command=guardar_ubicacion, bg="#FF5733", fg="white", font=('Arial', 11, 'bold'))
+    btn_guardar.grid(row=3, column=0, columnspan=2, pady=10)
+
 
 # Función para eliminar microcontrolador
 def eliminar_microcontrolador():
