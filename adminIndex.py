@@ -16,10 +16,6 @@ conn = mysql.connector.connect(
 cursor = conn.cursor()
 
 # Función para mostrar la ventana de gestión de sensores
-def gestionar_sensores():
-    admin_sensores.mostrar_sensores()  # Esto solo se ejecutará cuando se haga clic en el botón
-
-# Función para mostrar la ventana de gestión de sensores
 def gestionar_usuarios():
     admin_usuarios.mostrar_usuarios()  # Esto solo se ejecutará cuando se haga clic en el botón
 
@@ -28,38 +24,24 @@ def gestionar_microcontroladores():
     admin_microcontroladores.mostrar_microcontroladores()  # Esto solo se ejecutará cuando se haga clic en el botón
 
 # Función para abrir la ventana de "Dashboard"
-def abrir_dashboardCEO2():
+def abrir_dashboard_Fecha():
     try:
-        subprocess.Popen(["python", "DashCEO2.py"])
+        subprocess.Popen(["python", "DashFechaValor.py"])
     except Exception as e:
-        messagebox.showerror("Error", f"No se pudo abrir la ventana de datos: {e}")
+        messagebox.showerror("Error", f"No se pudo abrir la ventana de dashboard: {e}")
 
-def abrir_dashboardHumedad():
+def abrir_dashboard_Ubi():
     try:
-        subprocess.Popen(["python", "DashHumedad.py"])
+        subprocess.Popen(["python", "DashUbicacionValor.py"])
     except Exception as e:
-        messagebox.showerror("Error", f"No se pudo abrir la ventana de datos: {e}")
+        messagebox.showerror("Error", f"No se pudo abrir la ventana de dashboard: {e}")
 
 
-def abrir_dashboardHumo():
-    try:
-        subprocess.Popen(["python", "DashHumo.py"])
-    except Exception as e:
-        messagebox.showerror("Error", f"No se pudo abrir la ventana de datos: {e}")
-
-def abrir_dashboardTemp():
-    try:
-        subprocess.Popen(["python", "DashTemp.py"])
-    except Exception as e:
-        messagebox.showerror("Error", f"No se pudo abrir la ventana de datos: {e}")
-
-# Función para abrir la ventana de "Datos"
 def abrir_datos():
     try:
-        subprocess.Popen(["python", "datosABM.py"])
+        subprocess.Popen(["python", "datosABM.py"]) 
     except Exception as e:
         messagebox.showerror("Error", f"No se pudo abrir la ventana de datos: {e}")
-
 
 
 
@@ -84,33 +66,21 @@ btn_usuarios = tk.Button(root, text="Gestionar Usuarios", command=gestionar_usua
 btn_usuarios.pack(pady=10)
 
 
-# Botones de navegación
 btn_dashboard = tk.Button(
-    root, text="Dashboard CO2", command=abrir_dashboardCEO2, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
+    root, text="Dashboard por Fechas", command=abrir_dashboard_Fecha, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
     activebackground="#C70039"
 )
-btn_dashboard.pack(pady=10)
 
-btn_dashboard = tk.Button(
-    root, text="Dashboard Humedad", command=abrir_dashboardHumedad, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
+btn_dashboard2 = tk.Button(
+    root, text="Dashboard por Ubicacion", command=abrir_dashboard_Ubi, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
     activebackground="#C70039"
 )
 btn_dashboard.pack(pady=10)
+btn_dashboard2.pack(pady=10)
 
-btn_dashboard = tk.Button(
-    root, text="Dashboard Humo", command=abrir_dashboardHumo, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
-    activebackground="#C70039"
-)
-btn_dashboard.pack(pady=10)
-
-btn_dashboard = tk.Button(
-    root, text="Dashboard Temperatura", command=abrir_dashboardTemp, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
-    activebackground="#C70039"
-)
-btn_dashboard.pack(pady=10)
 
 btn_datos = tk.Button(
-    root, text="Datos", command=abrir_datos, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
+    root, text="Gestionar Datos", command=abrir_datos, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
     activebackground="#C70039"
 )
 btn_datos.pack(pady=10)

@@ -206,7 +206,7 @@ def agregar_boton_sensor(sensor):
 # Cargar todos los sensores y agregar sus botones, excluyendo la tabla 'usuarios'
 def cargar_sensores():
     cursor.execute("SHOW TABLES")
-    sensores = [row[0] for row in cursor.fetchall() if row[0] != "usuarios"]
+    sensores = [row[0] for row in cursor.fetchall() if row[0] not in ["usuarios", "ubicaciones", "microcontroladores"]]
     for sensor in sensores:
         agregar_boton_sensor(sensor)
 
@@ -224,14 +224,6 @@ title_label.pack(padx=20, pady=20)
 frame_principal = tk.Frame(root, bg="#2d2d2d")
 frame_principal.pack(pady=10)
 
-btn_crear_sensor = tk.Button(frame_principal, text="Crear Sensor", command=crear_sensor, bg="#FF5733", fg="white", font=('Arial', 11, 'bold'))
-btn_crear_sensor.pack(side=tk.LEFT, padx=5, pady=5)
-
-btn_modificar_sensor = tk.Button(frame_principal, text="Modificar Sensor", command=modificar_sensor, bg="#FF5733", fg="white", font=('Arial', 11, 'bold'))
-btn_modificar_sensor.pack(side=tk.LEFT, padx=5, pady=5)
-
-btn_eliminar_sensor = tk.Button(frame_principal, text="Eliminar Sensor", command=eliminar_sensor, bg="#FF5733", fg="white", font=('Arial', 11, 'bold'))
-btn_eliminar_sensor.pack(side=tk.LEFT, padx=5, pady=5)
 
 frame_sensores = tk.Frame(root, bg="#2d2d2d", padx=10, pady=10)
 frame_sensores.pack(expand=True, fill='both')
