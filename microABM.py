@@ -40,9 +40,9 @@ def mostrar_microcontroladores():
 
     # Obtener y mostrar datos de microcontroladores
     cursor.execute("""
-        SELECT m.id, m.nombre, u.descripcion 
+        SELECT m.microcontroladores_id, m.nombre, u.descripcion 
         FROM microcontroladores m 
-        JOIN ubicaciones u ON m.ubicaciones_id = u.id
+        JOIN ubicaciones u ON m.ubicaciones_id = u.ubicaciones_id
     """)
     datos = cursor.fetchall()
     for dato in datos:
@@ -109,7 +109,7 @@ def agregar_microcontrolador():
 # Función para cargar ubicaciones en el Combobox
 ubicaciones = {}
 def actualizar_ubicaciones(combobox):
-    cursor.execute("SELECT id, descripcion FROM ubicaciones")
+    cursor.execute("SELECT ubicaciones_id, descripcion FROM ubicaciones")
     global ubicaciones
     ubicaciones = {desc: uid for uid, desc in cursor.fetchall()}
     combobox["values"] = list(ubicaciones.keys())
@@ -129,7 +129,7 @@ def agregar_ubicacion(combobox=None):
 def eliminar_microcontrolador():
     confirmacion = messagebox.askyesno("Confirmar eliminación", "¿Está seguro de que desea eliminar este microcontrolador?")
     if confirmacion:
-        cursor.execute("DELETE FROM microcontroladores WHERE id = %s", (selected_id,))
+        cursor.execute("DELETE FROM microcontroladores WHERE microcontroladores_id = %s", (selected_id,))
         conn.commit()
         mostrar_microcontroladores()
 
@@ -143,7 +143,7 @@ def modificar_microcontrolador():
     modificar_micro_win.title("Modificar Microcontrolador")
     modificar_micro_win.configure(bg="#2d2d2d")
 
-    cursor.execute("SELECT nombre, ubicaciones_id FROM microcontroladores WHERE id = %s", (selected_id,))
+    cursor.execute("SELECT nombre, ubicaciones_id FROM microcontroladores WHERE microcontroladores_id = %s", (selected_id,))
     nombre_actual, ubicacion_actual_id = cursor.fetchone()
 
     tk.Label(modificar_micro_win, text="Nombre", font=('Helvetica', 10), fg="white", bg="#2d2d2d").grid(row=0, column=0, padx=10, pady=10)
@@ -167,7 +167,7 @@ def modificar_microcontrolador():
             messagebox.showwarning("Campos incompletos", "Por favor complete todos los campos.")
             return
 
-        cursor.execute("UPDATE microcontroladores SET nombre = %s, ubicaciones_id = %s WHERE id = %s", (nombre, ubicacion_id, selected_id))
+        cursor.execute("UPDATE microcontroladores SET nombre = %s, ubicaciones_id = %s WHERE microcontroladores_id = %s", (nombre, ubicacion_id, selected_id))
         conn.commit()
         modificar_micro_win.destroy()
         mostrar_microcontroladores()

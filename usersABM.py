@@ -91,7 +91,7 @@ def mostrar_usuarios():
     # Función para eliminar usuario
     def eliminar_usuario():
         if messagebox.askyesno("Confirmar", f"¿Estás seguro de que deseas eliminar este usuario? (Id:{selected_id})"):
-            cursor.execute("DELETE FROM usuarios WHERE id = %s", (selected_id,))
+            cursor.execute("DELETE FROM usuarios WHERE usuarios_id = %s", (selected_id,))
             conn.commit()
             mostrar_usuarios()
             messagebox.showinfo("Éxito", "Usuario eliminado exitosamente.")
@@ -106,7 +106,7 @@ def mostrar_usuarios():
         modificar_win.title("Modificar Usuario")
         modificar_win.configure(bg="#2d2d2d")
 
-        cursor.execute("SELECT * FROM usuarios WHERE id = %s", (selected_id,))
+        cursor.execute("SELECT * FROM usuarios WHERE usuarios_id = %s", (selected_id,))
         usuario = cursor.fetchone()
 
         lbl_usuario = tk.Label(modificar_win, text="Usuario", font=('Helvetica', 10), fg="white", bg="#2d2d2d")
@@ -129,7 +129,7 @@ def mostrar_usuarios():
                 messagebox.showwarning("Campos incompletos", "Por favor complete todos los campos.")
                 return
 
-            query = "UPDATE usuarios SET usuario=%s, password=%s WHERE id=%s"
+            query = "UPDATE usuarios SET usuario=%s, password=%s WHERE usuarios_id=%s"
             cursor.execute(query, (nuevo_usuario, nueva_password, selected_id))
             conn.commit()
 

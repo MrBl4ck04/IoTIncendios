@@ -72,7 +72,7 @@ def mostrar_datos_sensor(sensor):
     # Función para eliminar dato
     def eliminar_dato(dato_id):
         if messagebox.askyesno("Confirmar", f"¿Estás seguro de que deseas eliminar este dato? (Id:{dato_id})"):
-            cursor.execute(f"DELETE FROM {sensor} WHERE id = %s", (dato_id,))
+            cursor.execute(f"DELETE FROM {sensor} WHERE {sensor}_id = %s", (dato_id,))
             conn.commit()
             mostrar_datos_sensor(sensor)
             messagebox.showinfo("Éxito", "Dato eliminado exitosamente.")
@@ -87,7 +87,7 @@ def mostrar_datos_sensor(sensor):
         modificar_win.title("Modificar Dato")
         modificar_win.configure(bg="#2d2d2d")
 
-        cursor.execute(f"SELECT * FROM {sensor} WHERE id = %s", (dato_id,))
+        cursor.execute(f"SELECT * FROM {sensor} WHERE {sensor}_id = %s", (dato_id,))
         dato = cursor.fetchone()
 
         lbl_valor = tk.Label(modificar_win, text="Valor", font=('Helvetica', 10), fg="white", bg="#2d2d2d")
@@ -102,7 +102,7 @@ def mostrar_datos_sensor(sensor):
                 messagebox.showwarning("Campos incompletos", "Por favor complete todos los campos.")
                 return
 
-            query = f"UPDATE {sensor} SET valor=%s WHERE id=%s"
+            query = f"UPDATE {sensor} SET valor=%s WHERE {sensor}_id=%s"
             cursor.execute(query, (nuevo_valor, dato_id))
             conn.commit()
             messagebox.showinfo("Éxito", "Dato modificado exitosamente.")
@@ -164,7 +164,7 @@ def crear_sensor():
         try:
             cursor.execute(f"""
                 CREATE TABLE {sensor_nombre} (
-                    id INT NOT NULL AUTO_INCREMENT,
+                    {sensor_nombre}_id INT NOT NULL AUTO_INCREMENT,
                     fecha DATE NOT NULL,
                     hora TIME NOT NULL,
                     valor DOUBLE(30,3) NOT NULL,
