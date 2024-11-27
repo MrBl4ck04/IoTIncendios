@@ -34,23 +34,22 @@ if ($sensor === 'todos') {
     ";
 } else {
     $query = "
-        SELECT 
-            ubicaciones.latitud, 
-            ubicaciones.longitud, 
-            microcontroladores.microcontroladores_id AS micro_id, 
-            '$sensor' AS tipo,
-            AVG($sensor.valor) AS promedio -- Promedio de los últimos valores del sensor seleccionado
-        FROM microcontroladores
-        JOIN ubicaciones ON microcontroladores.ubicaciones_id = ubicaciones.ubicaciones_id
-        JOIN (
-            SELECT * 
-            FROM $sensor
-            WHERE $sensor.microcontroladores_id = microcontroladores.microcontroladores_id
-            ORDER BY $sensor.fecha DESC, $sensor.hora DESC
+    SELECT 
+        ubicaciones.latitud, 
+        ubicaciones.longitud, 
+        microcontroladores.microcontroladores_id AS micro_id, 
+        '$sensor' AS tipo,
+        (
+            SELECT AVG(valor) 
+            FROM $sensor 
+            WHERE $sensor.microcontroladores_id = microcontroladores.microcontroladores_id 
+            ORDER BY fecha DESC, hora DESC
             LIMIT 20
-        ) AS ultimos ON ultimos.microcontroladores_id = microcontroladores.microcontroladores_id
-        GROUP BY microcontroladores.microcontroladores_id
-    ";
+        ) AS promedio
+    FROM microcontroladores
+    JOIN ubicaciones ON microcontroladores.ubicaciones_id = ubicaciones.ubicaciones_id
+";
+
 }
 $result = $conn->query($query);
 
