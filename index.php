@@ -17,6 +17,7 @@ $sensor = isset($_GET['sensor']) ? $_GET['sensor'] : 'todos';
 $ubicacion = isset($_GET['ubicacion']) ? $_GET['ubicacion'] : 'todas';
 
 $data = [];
+$promedios = []; // Para almacenar los promedios por sensor
 
 if ($sensor === 'todos') {
     $query = "
@@ -59,6 +60,15 @@ if ($sensor === 'todos') {
     }
 }
 
+// Calcular promedios globales por sensor
+$sensores = ['flama', 'humedad', 'humo', 'temperatura'];
+foreach ($sensores as $tipo) {
+    $promedioQuery = "SELECT AVG(valor) AS promedio FROM $tipo";
+    $result = $conn->query($promedioQuery);
+    $row = $result->fetch_assoc();
+    $promedios[$tipo] = round($row['promedio'], 2);
+}
+
 $result = $conn->query($query);
 
 if ($result && $result->num_rows > 0) {
@@ -86,7 +96,11 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == 1) {
     echo json_encode($data);
     exit;
 }
+
+// Pasar promedios a JavaScript
+echo "<script>const promedios = " . json_encode($promedios) . ";</script>";
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -216,15 +230,14 @@ legend.onAdd = function (map) {
     const labels = ['flama: nm', 'temperatura: celcius', 'humo: kg/m3', 'humedad: %'];
     const colors = ['orange', 'red', 'gray', 'blue'];
 
-    div.innerHTML = '<h4>Tipos de Sensores</h4>';
-    for (let i = 0; i < sensors.length; i++) {
-        div.innerHTML +=
-            `<i style="background: ${colors[i]}; width: 18px; height: 18px; display: inline-block; margin-right: 5px; border-radius: 3px;"></i> ${labels[i]}<br>`;
-    }
-
-    return div;
-};
-
+    div.innerHTML = `<h4>Promedios por Sensor</h4>`;
+            for (let i = 0; i < sensors.length; i++) {
+                div.innerHTML += `
+                    <i style="background: ${colors[i]}; width: 18px; height: 18px; display: inline-block; margin-right: 5px; border-radius: 3px;"></i>
+                    ${labels[i]}: ${promedios[sensors[i]] || 'N/A'}<br>`;
+            }
+            return div;
+        };
 // Añadir la leyenda al mapa
 legend.addTo(map);
     </script>
