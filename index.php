@@ -17,16 +17,41 @@ $sensor = isset($_GET['sensor']) ? $_GET['sensor'] : 'todos';
 $data = [];
 
 if ($sensor === 'todos') {
-    $query = "SELECT ubicaciones.latitud, ubicaciones.longitud, microcontroladores.id AS micro_id, 'todos' AS tipo
-              FROM microcontroladores
-              JOIN ubicaciones ON microcontroladores.ubicaciones_id = ubicaciones.id";
+    $query = "
+        SELECT 
+            ubicaciones.latitud, 
+            ubicaciones.longitud, 
+            microcontroladores.microcontroladores_id AS micro_id, 
+            'todos' AS tipo,
+            (
+                COALESCE((SELECT AVG(valor) FROM flama WHERE flama.microcontroladores_id = microcontroladores.microcontroladores_id ORDER BY fecha DESC, hora DESC LIMIT 20), 0) +
+                COALESCE((SELECT AVG(valor) FROM humedad WHERE humedad.microcontroladores_id = microcontroladores.microcontroladores_id ORDER BY fecha DESC, hora DESC LIMIT 20), 0) +
+                COALESCE((SELECT AVG(valor) FROM humo WHERE humo.microcontroladores_id = microcontroladores.microcontroladores_id ORDER BY fecha DESC, hora DESC LIMIT 20), 0) +
+                COALESCE((SELECT AVG(valor) FROM temperatura WHERE temperatura.microcontroladores_id = microcontroladores.microcontroladores_id ORDER BY fecha DESC, hora DESC LIMIT 20), 0)
+            ) / 4 AS promedio -- Promedio de todos los sensores
+        FROM microcontroladores
+        JOIN ubicaciones ON microcontroladores.ubicaciones_id = ubicaciones.ubicaciones_id
+    ";
 } else {
-    $query = "SELECT ubicaciones.latitud, ubicaciones.longitud, microcontroladores.id AS micro_id, '$sensor' AS tipo
-              FROM microcontroladores
-              JOIN ubicaciones ON microcontroladores.ubicaciones_id = ubicaciones.id
-              JOIN $sensor ON $sensor.microcontroladores_id = microcontroladores.id";
+    $query = "
+        SELECT 
+            ubicaciones.latitud, 
+            ubicaciones.longitud, 
+            microcontroladores.microcontroladores_id AS micro_id, 
+            '$sensor' AS tipo,
+            AVG($sensor.valor) AS promedio -- Promedio de los últimos valores del sensor seleccionado
+        FROM microcontroladores
+        JOIN ubicaciones ON microcontroladores.ubicaciones_id = ubicaciones.ubicaciones_id
+        JOIN (
+            SELECT * 
+            FROM $sensor
+            WHERE $sensor.microcontroladores_id = microcontroladores.microcontroladores_id
+            ORDER BY $sensor.fecha DESC, $sensor.hora DESC
+            LIMIT 20
+        ) AS ultimos ON ultimos.microcontroladores_id = microcontroladores.microcontroladores_id
+        GROUP BY microcontroladores.microcontroladores_id
+    ";
 }
-
 $result = $conn->query($query);
 
 if ($result && $result->num_rows > 0) {
@@ -109,37 +134,47 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == 1) {
         };
 
         function updateMap() {
-            const sensor = document.getElementById('sensor').value;
+    const sensor = document.getElementById('sensor').value;
 
-            // Realizar una solicitud AJAX para obtener los datos
-            fetch(`index.php?sensor=${sensor}&ajax=1`)
-                .then(response => response.json())
-                .then(data => {
-                    // Eliminar marcadores y círculos existentes
-                    markers.forEach(marker => map.removeLayer(marker));
-                    circles.forEach(circle => map.removeLayer(circle));
-                    markers = [];
-                    circles = [];
+    // Realizar una solicitud AJAX para obtener los datos
+    fetch(`index.php?sensor=${sensor}&ajax=1`)
+        .then(response => response.json())
+        .then(data => {
+            // Eliminar marcadores y círculos existentes
+            markers.forEach(marker => map.removeLayer(marker));
+            circles.forEach(circle => map.removeLayer(circle));
+            markers = [];
+            circles = [];
 
-                    // Agregar nuevos marcadores y círculos
-                    data.forEach(location => {
-                        const marker = L.marker([location.latitud, location.longitud])
-                            .addTo(map)
-                            .bindPopup(`Microcontrolador ID: ${location.micro_id}<br>Sensor: ${location.tipo}`);
-                        
-                        const circle = L.circle([location.latitud, location.longitud], {
-                            color: getColorBySensor(location.tipo), // Color dinámico
-                            fillColor: getColorBySensor(location.tipo),
-                            fillOpacity: 0.3, // Transparencia del círculo
-                            radius: 50 // Radio del círculo en metros
-                        }).addTo(map);
+            // Agregar nuevos marcadores y círculos
+            data.forEach(location => {
+                const marker = L.marker([location.latitud, location.longitud])
+                    .addTo(map)
+                    .bindPopup(`
+                        Microcontrolador ID: ${location.micro_id}<br>
+                        Sensor: ${location.tipo}<br>
+                        Promedio: ${location.promedio || 'N/A'}
+                    `);
+                
+                // Ajustar el tamaño del círculo según el promedio
+                const baseRadius = 5; // Tamaño base mínimo
+                const scaleFactor = 2; // Factor para escalar el promedio
+                const radius = location.promedio ? location.promedio * 0.5 : 10; // Más pequeño
+const circle = L.circle([location.latitud, location.longitud], {
+    color: getColorBySensor(location.tipo), // Color dinámico
+    fillColor: getColorBySensor(location.tipo),
+    fillOpacity: 0.3, // Transparencia del círculo
+    radius: radius // Radio ajustado
+}).addTo(map);
 
-                        markers.push(marker);
-                        circles.push(circle);
-                    });
-                })
-                .catch(err => console.error('Error al obtener los datos:', err));
-        }
+
+                markers.push(marker);
+                circles.push(circle);
+            });
+        })
+        .catch(err => console.error('Error al obtener los datos:', err));
+}
+
 
         // Cargar todos los puntos al inicio
         updateMap();
