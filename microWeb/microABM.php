@@ -14,13 +14,75 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Microcontroladores</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <style>
+        .context-menu {
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 1000;
+        }
+        .context-menu ul {
+            list-style: none;
+            padding: 5px 0;
+            margin: 0;
+        }
+        .context-menu li {
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+        .context-menu li:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="indexAdmin.html">OnFire</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://localhost/IoTIncendios/mapa.php">Puntos de alerta</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://localhost/IoTIncendios/usersWEb/usersABM.php">Usuarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://localhost/IoTIncendios/microWEb/microABM.php">Microcontroladores</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Datos Sensores
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=flama">Flama</a>
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=humedad">Humedad</a>
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=humo">Humo</a>
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=temperatura">Temperatura</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://localhost/IoTIncendios/contacto/indexContacto.html">Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://127.0.0.1:5501/frontend/index.html">Cerrar sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="margin-top: 120px;">
         <h1>Microcontroladores</h1>
-        <table id="microcontroladoresTable">
-            <thead>
+        <table id="microcontroladoresTable" class="table table-striped">
+            <thead class="thead-dark">
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
@@ -37,17 +99,17 @@ $result = $conn->query($sql);
                 <?php endwhile; ?>
             </tbody>
         </table>
-        <a href="agregar_microcontrolador.php" class="button">Agregar Microcontrolador</a>
-        <a href="agregar_ubicacion.php" class="button">Agregar Ubicación</a> <!-- Botón para agregar ubicaciones -->
+        <a href="agregar_microcontrolador.php" class="btn btn-success">Agregar Microcontrolador</a>
+        <a href="agregar_ubicacion.php" class="btn btn-success">Agregar Ubicación</a>
     </div>
 
     <!-- Modal de Confirmación -->
-    <div id="modalEliminar" class="modal">
+    <div id="modalEliminar" class="modal" style="display: none;">
         <div class="modal-content">
             <p>¿Estás seguro de que deseas eliminar este microcontrolador?</p>
             <div class="modal-actions">
-                <button id="cancelarEliminar" class="button secondary">Cancelar</button>
-                <button id="confirmarEliminar" class="button">Eliminar</button>
+                <button id="cancelarEliminar" class="btn btn-secondary">Cancelar</button>
+                <button id="confirmarEliminar" class="btn btn-danger">Eliminar</button>
             </div>
         </div>
     </div>
@@ -81,8 +143,10 @@ $result = $conn->query($sql);
         });
 
         // Ocultar menú contextual al hacer clic fuera
-        document.addEventListener('click', () => {
-            contextMenu.style.display = 'none';
+        document.addEventListener('click', (e) => {
+            if (!contextMenu.contains(e.target)) {
+                contextMenu.style.display = 'none';
+            }
         });
 
         // Acción de editar
@@ -105,5 +169,8 @@ $result = $conn->query($sql);
             modalEliminar.style.display = 'none';
         });
     </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

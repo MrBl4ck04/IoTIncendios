@@ -32,22 +32,64 @@ if ($sensor && $id && isset($_POST['confirmar_eliminacion'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Datos del Sensor</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Datos del Sensor: <?= ucfirst($sensor) ?></h1>
+    <!-- Navbar principal con enlaces -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="http://127.0.0.1:5501/frontend/indexAdmin.html">OnFire</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://localhost/IoTIncendios/mapa.php">Puntos de alerta</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://localhost/IoTIncendios/usersWEb/usersABM.php">Usuarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://localhost/IoTIncendios/microWEb/microABM.php">Microcontroladores</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Datos Sensores
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=flama">Flama</a>
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=humedad">Humedad</a>
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=humo">Humo</a>
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=temperatura">Temperatura</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://localhost/IoTIncendios/contacto/indexContacto.html">Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://127.0.0.1:5501/frontend/index.html">Cerrar sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="margin-top: 120px;">
+        <h1 class="my-4">Datos del Sensor: <?= ucfirst($sensor) ?></h1>
         
-        <button onclick="window.location.href='agregar_dato.php?sensor=<?= $sensor ?>'">Agregar Dato</button>
-        <button onclick="window.location.href='exportar_csv.php?sensor=<?= $sensor ?>'">Exportar a CSV</button>
+        <div class="mb-4">
+            <button onclick="window.location.href='agregar_dato.php?sensor=<?= $sensor ?>'" class="btn btn-success">Agregar Dato</button>
+            <button onclick="window.location.href='exportar_csv.php?sensor=<?= $sensor ?>'" class="btn btn-success">Exportar a CSV</button>
+        </div>
 
         <!-- Notificación -->
         <?php if (isset($mensaje)): ?>
-            <div class="notificacion"><?= $mensaje ?></div>
+            <div class="alert alert-info"><?= $mensaje ?></div>
         <?php endif; ?>
 
-        <table>
-            <thead>
+        <table class="table table-striped">
+            <thead class="thead-dark">
                 <tr>
                     <?php foreach ($columns as $column): ?>
                         <th><?= ucfirst($column) ?></th>
@@ -62,9 +104,9 @@ if ($sensor && $id && isset($_POST['confirmar_eliminacion'])) {
                         <?php endforeach; ?>
                         <td>
                             <!-- Menú contextual dentro de cada fila -->
-                            <div id="menu-contextual-<?= $row[$columns[0]] ?>" class="menu-contextual" oncontextmenu="evitarCierreMenu(event)">
-                                <a href="modificar_dato.php?sensor=<?= $sensor ?>&id=<?= $row[$columns[0]] ?>">Modificar</a>
-                                <a href="javascript:void(0);" onclick="mostrarModal('<?= $row[$columns[0]] ?>')">Eliminar</a>
+                            <div id="menu-contextual-<?= $row[$columns[0]] ?>" class="dropdown-menu" style="display: none;">
+                                <a class="dropdown-item" href="modificar_dato.php?sensor=<?= $sensor ?>&id=<?= $row[$columns[0]] ?>">Modificar</a>
+                                <a class="dropdown-item" href="javascript:void(0);" onclick="mostrarModal('<?= $row[$columns[0]] ?>')">Eliminar</a>
                             </div>
                         </td>
                     </tr>
@@ -74,15 +116,25 @@ if ($sensor && $id && isset($_POST['confirmar_eliminacion'])) {
     </div>
 
     <!-- Modal de Confirmación -->
-    <div id="modal-confirmacion" class="modal">
-        <div class="modal-content">
-            <p>¿Estás seguro de que deseas eliminar este dato?</p>
-            <div class="modal-actions">
-                <form method="POST">
-                    <input type="hidden" name="id" id="dato-id">
-                    <button type="submit" name="confirmar_eliminacion" class="button">Eliminar</button>
-                </form>
-                <button id="cancelarEliminar" class="button secondary" onclick="cerrarModal()">Cancelar</button>
+    <div id="modal-confirmacion" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalConfirmacionLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalConfirmacionLabel">Confirmación de Eliminación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que deseas eliminar este dato?</p>
+                </div>
+                <div class="modal-footer">
+                    <form method="POST">
+                        <input type="hidden" name="id" id="dato-id">
+                        <button type="submit" name="confirmar_eliminacion" class="btn btn-danger">Eliminar</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
             </div>
         </div>
     </div>
@@ -95,12 +147,7 @@ if ($sensor && $id && isset($_POST['confirmar_eliminacion'])) {
         function mostrarModal(id) {
             selectedId = id;
             document.getElementById('dato-id').value = selectedId;
-            document.getElementById('modal-confirmacion').style.display = 'flex';
-        }
-
-        // Función para cerrar el modal
-        function cerrarModal() {
-            document.getElementById('modal-confirmacion').style.display = 'none';
+            $('#modal-confirmacion').modal('show');
         }
 
         // Función para mostrar el menú contextual
@@ -113,18 +160,16 @@ if ($sensor && $id && isset($_POST['confirmar_eliminacion'])) {
             menu.style.top = event.pageY + 'px';
         }
 
-        // Función para prevenir el cierre inmediato del menú
-        function evitarCierreMenu(event) {
-            event.stopPropagation();
-        }
-
         // Cerrar el menú contextual al hacer clic fuera
         document.addEventListener('click', function() {
-            var menus = document.querySelectorAll('.menu-contextual');
+            var menus = document.querySelectorAll('.dropdown-menu');
             menus.forEach(function(menu) {
                 menu.style.display = 'none';
             });
         });
     </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
