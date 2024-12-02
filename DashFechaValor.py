@@ -13,7 +13,7 @@ db_config = {
 
 # Consultas SQL para las cuatro tablas
 queries = {
-    "co2": "SELECT fecha, hora, valor FROM co2 ORDER BY fecha, hora",
+    "flama": "SELECT fecha, hora, valor FROM flama ORDER BY fecha, hora",
     "humedad": "SELECT fecha, hora, valor FROM humedad ORDER BY fecha, hora",
     "humo": "SELECT fecha, hora, valor FROM humo ORDER BY fecha, hora",
     "temperatura": "SELECT fecha, hora, valor FROM temperatura ORDER BY fecha, hora"

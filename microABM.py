@@ -40,9 +40,9 @@ def mostrar_microcontroladores():
 
     # Obtener y mostrar datos de microcontroladores
     cursor.execute("""
-        SELECT m.id, m.nombre, u.descripcion 
+        SELECT m.microcontroladores_id, m.nombre, u.descripcion 
         FROM microcontroladores m 
-        JOIN ubicaciones u ON m.ubicaciones_id = u.id
+        JOIN ubicaciones u ON m.ubicaciones_id = u.ubicaciones_id
     """)
     datos = cursor.fetchall()
     for dato in datos:
@@ -109,27 +109,72 @@ def agregar_microcontrolador():
 # Función para cargar ubicaciones en el Combobox
 ubicaciones = {}
 def actualizar_ubicaciones(combobox):
-    cursor.execute("SELECT id, descripcion FROM ubicaciones")
+    cursor.execute("SELECT ubicaciones_id, descripcion FROM ubicaciones")
     global ubicaciones
     ubicaciones = {desc: uid for uid, desc in cursor.fetchall()}
     combobox["values"] = list(ubicaciones.keys())
 
 # Función para agregar una nueva ubicación
 def agregar_ubicacion(combobox=None):
-    nueva_ubicacion = simpledialog.askstring("Nueva Ubicación", "Ingrese la descripción de la nueva ubicación:")
-    if nueva_ubicacion:
-        cursor.execute("INSERT INTO ubicaciones (descripcion) VALUES (%s)", (nueva_ubicacion,))
-        conn.commit()
-        if combobox:
-            actualizar_ubicaciones(combobox)
-            combobox.set(nueva_ubicacion)
-        messagebox.showinfo("Éxito", "Ubicación agregada exitosamente.")
+    # Crear ventana para ingresar datos de la nueva ubicación
+    agregar_ubicacion_win = tk.Toplevel()
+    agregar_ubicacion_win.title("Agregar Ubicación")
+    agregar_ubicacion_win.configure(bg="#2d2d2d")
+    
+    # Entrada para descripción
+    tk.Label(agregar_ubicacion_win, text="Descripción", font=('Helvetica', 10), fg="white", bg="#2d2d2d").grid(row=0, column=0, padx=10, pady=10)
+    entry_descripcion = tk.Entry(agregar_ubicacion_win, font=('Helvetica', 10), width=20)
+    entry_descripcion.grid(row=0, column=1, padx=10, pady=10)
+    
+    # Entrada para latitud
+    tk.Label(agregar_ubicacion_win, text="Latitud", font=('Helvetica', 10), fg="white", bg="#2d2d2d").grid(row=1, column=0, padx=10, pady=10)
+    entry_latitud = tk.Entry(agregar_ubicacion_win, font=('Helvetica', 10), width=20)
+    entry_latitud.grid(row=1, column=1, padx=10, pady=10)
+    
+    # Entrada para longitud
+    tk.Label(agregar_ubicacion_win, text="Longitud", font=('Helvetica', 10), fg="white", bg="#2d2d2d").grid(row=2, column=0, padx=10, pady=10)
+    entry_longitud = tk.Entry(agregar_ubicacion_win, font=('Helvetica', 10), width=20)
+    entry_longitud.grid(row=2, column=1, padx=10, pady=10)
+    
+    # Función para guardar la ubicación en la base de datos
+    def guardar_ubicacion():
+        descripcion = entry_descripcion.get()
+        try:
+            latitud = float(entry_latitud.get())
+            longitud = float(entry_longitud.get())
+        except ValueError:
+            messagebox.showerror("Error", "La latitud y la longitud deben ser números válidos.")
+            return
+
+        if not descripcion:
+            messagebox.showwarning("Campos incompletos", "Por favor complete la descripción.")
+            return
+
+        # Insertar la nueva ubicación en la base de datos
+        try:
+            cursor.execute(
+                "INSERT INTO ubicaciones (descripcion, latitud, longitud) VALUES (%s, %s, %s)",
+                (descripcion, latitud, longitud)
+            )
+            conn.commit()
+            if combobox:
+                actualizar_ubicaciones(combobox)
+                combobox.set(descripcion)
+            messagebox.showinfo("Éxito", "Ubicación agregada exitosamente.")
+            agregar_ubicacion_win.destroy()
+        except mysql.connector.Error as err:
+            messagebox.showerror("Error", f"No se pudo agregar la ubicación: {err}")
+    
+    # Botón para guardar
+    btn_guardar = tk.Button(agregar_ubicacion_win, text="Guardar", command=guardar_ubicacion, bg="#FF5733", fg="white", font=('Arial', 11, 'bold'))
+    btn_guardar.grid(row=3, column=0, columnspan=2, pady=10)
+
 
 # Función para eliminar microcontrolador
 def eliminar_microcontrolador():
     confirmacion = messagebox.askyesno("Confirmar eliminación", "¿Está seguro de que desea eliminar este microcontrolador?")
     if confirmacion:
-        cursor.execute("DELETE FROM microcontroladores WHERE id = %s", (selected_id,))
+        cursor.execute("DELETE FROM microcontroladores WHERE microcontroladores_id = %s", (selected_id,))
         conn.commit()
         mostrar_microcontroladores()
 
@@ -143,7 +188,7 @@ def modificar_microcontrolador():
     modificar_micro_win.title("Modificar Microcontrolador")
     modificar_micro_win.configure(bg="#2d2d2d")
 
-    cursor.execute("SELECT nombre, ubicaciones_id FROM microcontroladores WHERE id = %s", (selected_id,))
+    cursor.execute("SELECT nombre, ubicaciones_id FROM microcontroladores WHERE microcontroladores_id = %s", (selected_id,))
     nombre_actual, ubicacion_actual_id = cursor.fetchone()
 
     tk.Label(modificar_micro_win, text="Nombre", font=('Helvetica', 10), fg="white", bg="#2d2d2d").grid(row=0, column=0, padx=10, pady=10)
@@ -167,7 +212,7 @@ def modificar_microcontrolador():
             messagebox.showwarning("Campos incompletos", "Por favor complete todos los campos.")
             return
 
-        cursor.execute("UPDATE microcontroladores SET nombre = %s, ubicaciones_id = %s WHERE id = %s", (nombre, ubicacion_id, selected_id))
+        cursor.execute("UPDATE microcontroladores SET nombre = %s, ubicaciones_id = %s WHERE microcontroladores_id = %s", (nombre, ubicacion_id, selected_id))
         conn.commit()
         modificar_micro_win.destroy()
         mostrar_microcontroladores()

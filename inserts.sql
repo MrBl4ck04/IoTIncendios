@@ -1,45 +1,5 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Servidor: localhost
--- Tiempo de generación: 23-11-2024 a las 03:36:53
--- Versión del servidor: 8.0.30
--- Versión de PHP: 8.1.10
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Base de datos: `onfirebd`
---
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `flama`
---
-
-CREATE TABLE `flama` (
-  `id` int NOT NULL,
-  `fecha` date NOT NULL,
-  `hora` time NOT NULL,
-  `valor` double(30,3) NOT NULL,
-  `microcontroladores_id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Volcado de datos para la tabla `flama`
---
-
-INSERT INTO `flama` (`id`, `fecha`, `hora`, `valor`, `microcontroladores_id`) VALUES
+INSERT INTO `flama` (`flama_id`, `fecha`, `hora`, `valor`, `microcontroladores_id`) VALUES
 (1, '2024-11-22', '17:16:00', 126.000, 2),
 (2, '2024-11-22', '17:16:05', 157.000, 1),
 (3, '2024-11-22', '17:16:09', 144.000, 1),
@@ -122,25 +82,10 @@ INSERT INTO `flama` (`id`, `fecha`, `hora`, `valor`, `microcontroladores_id`) VA
 (80, '2024-11-22', '17:23:42', 154.000, 2),
 (81, '2024-11-22', '17:23:47', 161.000, 1);
 
--- --------------------------------------------------------
 
---
--- Estructura de tabla para la tabla `humedad`
---
 
-CREATE TABLE `humedad` (
-  `id` int NOT NULL,
-  `fecha` date NOT NULL,
-  `hora` time NOT NULL,
-  `valor` double(30,3) NOT NULL,
-  `microcontroladores_id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Volcado de datos para la tabla `humedad`
---
-
-INSERT INTO `humedad` (`id`, `fecha`, `hora`, `valor`, `microcontroladores_id`) VALUES
+INSERT INTO `humedad` (`humedad_id`, `fecha`, `hora`, `valor`, `microcontroladores_id`) VALUES
 (1, '2024-11-22', '17:15:59', 64.200, 1),
 (2, '2024-11-22', '17:16:04', 64.100, 1),
 (3, '2024-11-22', '17:16:08', 64.100, 2),
@@ -223,25 +168,8 @@ INSERT INTO `humedad` (`id`, `fecha`, `hora`, `valor`, `microcontroladores_id`) 
 (80, '2024-11-22', '17:23:41', 60.900, 1),
 (81, '2024-11-22', '17:23:45', 60.900, 2);
 
--- --------------------------------------------------------
 
---
--- Estructura de tabla para la tabla `humo`
---
-
-CREATE TABLE `humo` (
-  `id` int NOT NULL,
-  `fecha` date NOT NULL,
-  `hora` time NOT NULL,
-  `valor` double(30,3) NOT NULL,
-  `microcontroladores_id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Volcado de datos para la tabla `humo`
---
-
-INSERT INTO `humo` (`id`, `fecha`, `hora`, `valor`, `microcontroladores_id`) VALUES
+INSERT INTO `humo` (`humo_id`, `fecha`, `hora`, `valor`, `microcontroladores_id`) VALUES
 (1, '2024-11-22', '17:16:00', 943.000, 1),
 (2, '2024-11-22', '17:16:05', 1059.000, 2),
 (3, '2024-11-22', '17:16:11', 1001.000, 2),
@@ -324,45 +252,8 @@ INSERT INTO `humo` (`id`, `fecha`, `hora`, `valor`, `microcontroladores_id`) VAL
 (80, '2024-11-22', '17:23:42', 1351.000, 1),
 (81, '2024-11-22', '17:23:47', 1313.000, 2);
 
--- --------------------------------------------------------
 
---
--- Estructura de tabla para la tabla `microcontroladores`
---
-
-CREATE TABLE `microcontroladores` (
-  `id` int NOT NULL,
-  `nombre` varchar(50) NOT NULL,
-  `ubicaciones_id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Volcado de datos para la tabla `microcontroladores`
---
-
-INSERT INTO `microcontroladores` (`id`, `nombre`, `ubicaciones_id`) VALUES
-(1, 'ESP32', 1),
-(2, 'ESP32', 2);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `temperatura`
---
-
-CREATE TABLE `temperatura` (
-  `id` int NOT NULL,
-  `fecha` date NOT NULL,
-  `hora` time NOT NULL,
-  `valor` double(30,3) NOT NULL,
-  `microcontroladores_id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Volcado de datos para la tabla `temperatura`
---
-
-INSERT INTO `temperatura` (`id`, `fecha`, `hora`, `valor`, `microcontroladores_id`) VALUES
+INSERT INTO `temperatura` (`temperatura_id`, `fecha`, `hora`, `valor`, `microcontroladores_id`) VALUES
 (1, '2024-11-22', '17:15:59', 18.200, 2),
 (2, '2024-11-22', '17:16:03', 18.200, 2),
 (3, '2024-11-22', '17:16:08', 18.300, 1),
@@ -446,133 +337,54 @@ INSERT INTO `temperatura` (`id`, `fecha`, `hora`, `valor`, `microcontroladores_i
 (81, '2024-11-22', '17:23:45', 19.600, 2),
 (82, '2024-11-22', '17:23:50', 19.600, 1);
 
--- --------------------------------------------------------
 
---
--- Estructura de tabla para la tabla `ubicaciones`
---
+INSERT INTO `microcontroladores` (`microcontroladores_id`, `nombre`, `ubicaciones_id`) VALUES
+(1, 'ESP32', 1),
+(2, 'ESP32', 2);
 
-CREATE TABLE `ubicaciones` (
-  `id` int NOT NULL,
-  `descripcion` varchar(200) NOT NULL,
-  `latitud` float NOT NULL,
-  `longitud` float NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Volcado de datos para la tabla `ubicaciones`
---
-
-INSERT INTO `ubicaciones` (`id`, `descripcion`, `latitud`, `longitud`) VALUES
+INSERT INTO `ubicaciones` (`ubicaciones_id`, `descripcion`, `latitud`, `longitud`) VALUES
 (1, 'La Paz, Bolivia, Zona Central', -16.5526, -68.0718),
 (2, 'La Paz, Bolivia, Zona Sur', -16.5523, -68.0727),
 (3, 'La Paz,Bolivia,Zona Norte', -16.554, -68.0713);
 
--- --------------------------------------------------------
 
---
--- Estructura de tabla para la tabla `usuarios`
---
 
-CREATE TABLE `usuarios` (
-  `id` int NOT NULL,
-  `usuario` varchar(50) NOT NULL,
-  `password` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `flama`
---
 ALTER TABLE `flama`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `humedad`
---
-ALTER TABLE `humedad`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `humo`
---
-ALTER TABLE `humo`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `microcontroladores`
---
-ALTER TABLE `microcontroladores`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `temperatura`
---
-ALTER TABLE `temperatura`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `ubicaciones`
---
-ALTER TABLE `ubicaciones`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `flama`
---
-ALTER TABLE `flama`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+  MODIFY `flama_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT de la tabla `humedad`
 --
 ALTER TABLE `humedad`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+  MODIFY `humedad_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT de la tabla `humo`
 --
 ALTER TABLE `humo`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+  MODIFY `humo_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT de la tabla `microcontroladores`
 --
 ALTER TABLE `microcontroladores`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `microcontroladores_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `temperatura`
 --
 ALTER TABLE `temperatura`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+  MODIFY `temperatura_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- AUTO_INCREMENT de la tabla `ubicaciones`
 --
 ALTER TABLE `ubicaciones`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `ubicaciones_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `usuarios_id` int NOT NULL AUTO_INCREMENT;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

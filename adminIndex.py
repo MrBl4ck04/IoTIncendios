@@ -55,6 +55,7 @@ title_font = font.Font(family="Helvetica", size=24, weight="bold")
 title_label = tk.Label(root, text="🔥 On Fire - Gestión 🔥", font=title_font, fg="#FF5733", bg="#2d2d2d")
 title_label.pack(padx=20, pady=20)
 
+# Botones de navegación
 
 btn_microcontroladores = tk.Button(root, text="Gestionar Microcontroladores", command=gestionar_microcontroladores,  bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
     activebackground="#C70039")
@@ -65,16 +66,11 @@ btn_usuarios = tk.Button(root, text="Gestionar Usuarios", command=gestionar_usua
 btn_usuarios.pack(pady=10)
 
 
-btn_dashboard = tk.Button(
-    root, text="Dashboard por Fechas", command=abrir_dashboard_Fecha, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
-    activebackground="#C70039"
-)
 
 btn_dashboard2 = tk.Button(
     root, text="Dashboard por Ubicacion", command=abrir_dashboard_Ubi, bg="#FF5733", fg="white", font=('Helvetica', 16, 'bold'), relief="flat", 
     activebackground="#C70039"
 )
-btn_dashboard.pack(pady=10)
 btn_dashboard2.pack(pady=10)
 
 

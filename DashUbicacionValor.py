@@ -13,32 +13,32 @@ db_config = {
 
 # Consultas SQL para los sensores con la descripción de ubicación
 queries = {
-    "co2": """
+    "flama": """
         SELECT c.fecha, c.hora, c.valor, u.descripcion 
-        FROM co2 c
-        JOIN microcontroladores m ON c.microcontroladores_id = m.id
-        JOIN ubicaciones u ON m.ubicaciones_id = u.id
+        FROM flama c
+        JOIN microcontroladores m ON c.microcontroladores_id = m.microcontroladores_id
+        JOIN ubicaciones u ON m.ubicaciones_id = u.ubicaciones_id
         ORDER BY u.descripcion, c.fecha, c.hora
     """,
     "humedad": """
         SELECT h.fecha, h.hora, h.valor, u.descripcion 
         FROM humedad h
-        JOIN microcontroladores m ON h.microcontroladores_id = m.id
-        JOIN ubicaciones u ON m.ubicaciones_id = u.id
+        JOIN microcontroladores m ON h.microcontroladores_id = m.microcontroladores_id
+        JOIN ubicaciones u ON m.ubicaciones_id = u.ubicaciones_id
         ORDER BY u.descripcion, h.fecha, h.hora
     """,
     "humo": """
         SELECT h.fecha, h.hora, h.valor, u.descripcion 
         FROM humo h
-        JOIN microcontroladores m ON h.microcontroladores_id = m.id
-        JOIN ubicaciones u ON m.ubicaciones_id = u.id
+        JOIN microcontroladores m ON h.microcontroladores_id = m.microcontroladores_id
+        JOIN ubicaciones u ON m.ubicaciones_id = u.ubicaciones_id
         ORDER BY u.descripcion, h.fecha, h.hora
     """,
     "temperatura": """
         SELECT t.fecha, t.hora, t.valor, u.descripcion 
         FROM temperatura t
-        JOIN microcontroladores m ON t.microcontroladores_id = m.id
-        JOIN ubicaciones u ON m.ubicaciones_id = u.id
+        JOIN microcontroladores m ON t.microcontroladores_id = m.microcontroladores_id
+        JOIN ubicaciones u ON m.ubicaciones_id = u.ubicaciones_id
         ORDER BY u.descripcion, t.fecha, t.hora
     """
 }
@@ -70,7 +70,7 @@ plt.figure(figsize=(14, 8))
 
 # Preparar los datos por ubicación para el gráfico
 ubicaciones = []
-co2_values = []
+flama_values = []
 humedad_values = []
 humo_values = []
 temperatura_values = []
@@ -83,8 +83,8 @@ for sensor, data in data_sensores.items():
                 ubicaciones.append(ubicacion)
             
             # Asegurarse de que los valores de cada sensor estén agregados por ubicación
-            if sensor == "co2":
-                co2_values.append(group['valor'].mean())  # Usamos el valor medio por ubicación
+            if sensor == "flama":
+                flama_values.append(group['valor'].mean())  # Usamos el valor medio por ubicación
             elif sensor == "humedad":
                 humedad_values.append(group['valor'].mean())
             elif sensor == "humo":
@@ -93,15 +93,15 @@ for sensor, data in data_sensores.items():
                 temperatura_values.append(group['valor'].mean())
 
 # Organizar los valores para el gráfico
-sensor_labels = ['CO2', 'Humedad', 'Humo', 'Temperatura']
-values_matrix = np.array([co2_values, humedad_values, humo_values, temperatura_values])
+sensor_labels = ['flama', 'Humedad', 'Humo', 'Temperatura']
+values_matrix = np.array([flama_values, humedad_values, humo_values, temperatura_values])
 
 # Crear un gráfico de barras agrupadas
 bar_width = 0.2  # Ancho de las barras
 index = np.arange(len(ubicaciones))  # Índices para las ubicaciones
 
 # Graficar cada sensor
-plt.bar(index - 1.5*bar_width, co2_values, bar_width, label='CO2', color='b')
+plt.bar(index - 1.5*bar_width, flama_values, bar_width, label='flama', color='b')
 plt.bar(index - 0.5*bar_width, humedad_values, bar_width, label='Humedad', color='g')
 plt.bar(index + 0.5*bar_width, humo_values, bar_width, label='Humo', color='r')
 plt.bar(index + 1.5*bar_width, temperatura_values, bar_width, label='Temperatura', color='c')
