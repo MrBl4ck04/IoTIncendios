@@ -13,7 +13,7 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            background: linear-gradient(135deg, #66d36e, #9cd1a7);
         }
 
         .login-container {
@@ -42,7 +42,7 @@
         }
 
         .login-container button {
-            background: #74ebd5;
+            background: #66d36e;
             border: none;
             color: white;
             font-size: 18px;
@@ -53,7 +53,7 @@
         }
 
         .login-container button:hover {
-            background: #68c6c0;
+            background: #5ab86a;
         }
 
         .error-message {
@@ -74,17 +74,27 @@
     </div>
 
     <script>
-        function login() {
+        async function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            // Aquí puedes ajustar las credenciales que deseas utilizar para la autenticación.
-            const validUsername = 'admin';
-            const validPassword = 'admin123';
+            try {
+                const response = await fetch('login.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ usuario: username, password: password })
+                });
 
-            if (username === validUsername && password === validPassword) {
-                window.location.href = 'indexAdmin.html';
-            } else {
+                const result = await response.json();
+                if (result.success) {
+                    window.location.href = 'indexAdmin.html';
+                } else {
+                    document.getElementById('error').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
                 document.getElementById('error').style.display = 'block';
             }
         }
