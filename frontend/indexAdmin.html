@@ -25,26 +25,33 @@
                         <a class="nav-link" href="http://localhost/IoTIncendios/mapa.php">Puntos de alerta</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="http://localhost/IoTIncendios/usersWEb/usersABM.php">Usuarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://localhost/IoTIncendios/microWEb/microABM.php">Microcontroladores</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Datos Sensores
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=flama">Flama</a>
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=humedad">Humedad</a>
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=humo">Humo</a>
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=temperatura">Temperatura</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="/contacto/indexContacto.html">Contacto</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/contacto/indexContacto.html">Login</a>
+                        <a class="nav-link" href="index.html">Cerrar Sesion</a>
                     </li>
                 </ul>
             </div>
-
         </div>
     </nav>
 
-    <!-- Modal -->
-    <div id="documentationModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Documentación</h2>
-            <iframe id="docPreview" src="./Informe_DSS_Tsunami.pdf" width="100%" height="600px"></iframe>
-            <button id="downloadButton" class="btn btn-primary mt-3">Descargar Documentación</button>
-        </div>
-    </div>
 
     <div id="carouselIndicator" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
