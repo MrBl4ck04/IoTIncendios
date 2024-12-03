@@ -93,7 +93,7 @@ if ($sensor && $id && isset($_POST['confirmar_eliminacion'])) {
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="http://localhost/IoTIncendios/contacto/indexContacto.html">Contacto</a>
+                        <a class="nav-link" href="http://localhost/IoTIncendios/contacto/indexContactoAD.html">Contacto</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="http://127.0.0.1:5501/frontend/index.html">Cerrar sesión</a>
