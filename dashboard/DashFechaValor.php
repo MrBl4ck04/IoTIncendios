@@ -12,16 +12,45 @@ if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
 
-// Consultas SQL para las tablas
+// Obtener ubicaciones para el filtro
+$ubicacionesQuery = "SELECT ubicaciones_id, descripcion FROM ubicaciones";
+$ubicacionesResult = $conn->query($ubicacionesQuery);
+
+$ubicaciones = [];
+if ($ubicacionesResult && $ubicacionesResult->num_rows > 0) {
+    while ($row = $ubicacionesResult->fetch_assoc()) {
+        $ubicaciones[] = $row;
+    }
+}
+
+// Manejar el filtro
+$ubicacionSeleccionada = isset($_GET['ubicacion']) && $_GET['ubicacion'] !== '' ? (int) $_GET['ubicacion'] : null;
+
+// Consultas SQL para las tablas con o sin filtro
 $queries = [
-    "flama" => "SELECT CONCAT(fecha, ' ', hora) AS fecha_hora, valor FROM flama ORDER BY fecha, hora",
-    "humedad" => "SELECT CONCAT(fecha, ' ', hora) AS fecha_hora, valor FROM humedad ORDER BY fecha, hora",
-    "humo" => "SELECT CONCAT(fecha, ' ', hora) AS fecha_hora, valor FROM humo ORDER BY fecha, hora",
-    "temperatura" => "SELECT CONCAT(fecha, ' ', hora) AS fecha_hora, valor FROM temperatura ORDER BY fecha, hora"
+    "flama" => "SELECT CONCAT(flama.fecha, ' ', flama.hora) AS fecha_hora, flama.valor 
+                FROM flama 
+                INNER JOIN microcontroladores ON flama.microcontroladores_id = microcontroladores.microcontroladores_id " .
+                ($ubicacionSeleccionada ? "WHERE microcontroladores.ubicaciones_id = $ubicacionSeleccionada " : "") .
+                "ORDER BY flama.fecha, flama.hora",
+    "humedad" => "SELECT CONCAT(humedad.fecha, ' ', humedad.hora) AS fecha_hora, humedad.valor 
+                  FROM humedad 
+                  INNER JOIN microcontroladores ON humedad.microcontroladores_id = microcontroladores.microcontroladores_id " .
+                  ($ubicacionSeleccionada ? "WHERE microcontroladores.ubicaciones_id = $ubicacionSeleccionada " : "") .
+                  "ORDER BY humedad.fecha, humedad.hora",
+    "humo" => "SELECT CONCAT(humo.fecha, ' ', humo.hora) AS fecha_hora, humo.valor 
+               FROM humo 
+               INNER JOIN microcontroladores ON humo.microcontroladores_id = microcontroladores.microcontroladores_id " .
+               ($ubicacionSeleccionada ? "WHERE microcontroladores.ubicaciones_id = $ubicacionSeleccionada " : "") .
+               "ORDER BY humo.fecha, humo.hora",
+    "temperatura" => "SELECT CONCAT(temperatura.fecha, ' ', temperatura.hora) AS fecha_hora, temperatura.valor 
+                      FROM temperatura 
+                      INNER JOIN microcontroladores ON temperatura.microcontroladores_id = microcontroladores.microcontroladores_id " .
+                      ($ubicacionSeleccionada ? "WHERE microcontroladores.ubicaciones_id = $ubicacionSeleccionada " : "") .
+                      "ORDER BY temperatura.fecha, temperatura.hora"
 ];
 
 $data = [];
-
 foreach ($queries as $sensor => $query) {
     $result = $conn->query($query);
     if ($result && $result->num_rows > 0) {
@@ -50,16 +79,25 @@ $conn->close();
 </head>
 <body>
     <h1>Evolución de los Sensores a lo largo del Tiempo</h1>
+
+    <!-- Formulario para seleccionar la ubicación -->
+    <form method="GET">
+        <label for="ubicacion">Selecciona una ubicación:</label>
+        <select name="ubicacion" id="ubicacion" onchange="this.form.submit()">
+            <option value="">Todas</option>
+            <?php foreach ($ubicaciones as $ubicacion): ?>
+                <option value="<?= $ubicacion['ubicaciones_id']; ?>" <?= $ubicacionSeleccionada == $ubicacion['ubicaciones_id'] ? 'selected' : ''; ?>>
+                    <?= htmlspecialchars($ubicacion['descripcion']); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </form>
+
     <canvas id="sensorChart" width="800" height="400"></canvas>
     <script>
         // Datos de PHP a JavaScript
         const dataSensores = <?php echo json_encode($data); ?>;
         console.log(dataSensores); // Depuración: Verifica los datos en la consola
-
-        // Verifica que hay datos antes de graficar
-        if (Object.keys(dataSensores).length === 0) {
-            alert('No hay datos disponibles para mostrar.');
-        }
 
         // Configuración de los datasets para Chart.js
         const datasets = Object.keys(dataSensores).map(sensor => {
@@ -78,18 +116,18 @@ $conn->close();
         }
 
         // Crear el gráfico
-        const ctx = document.getElementById('sensorChart').getContext('2d'); // Asegúrate de que el ID sea correcto
+        const ctx = document.getElementById('sensorChart').getContext('2d');
         const miGrafica = new Chart(ctx, {
-            type: 'line', // Tipo de gráfico
+            type: 'line',
             data: {
-                datasets: datasets, // Usa los datasets generados dinámicamente
+                datasets: datasets,
             },
             options: {
                 scales: {
                     x: {
-                        type: 'time', // Escala de tiempo
+                        type: 'time',
                         time: {
-                            unit: 'day', // Cambia según la unidad que desees
+                            unit: 'day',
                         },
                     },
                     y: {
@@ -101,4 +139,3 @@ $conn->close();
     </script>
 </body>
 </html>
-
