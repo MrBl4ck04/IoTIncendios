@@ -27,17 +27,29 @@
     
             <div class="collapse navbar-collapse" id="navbarOpen">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../frontend/index.html">Inicio</a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link" href="http://localhost/index.php">Puntos de alerta</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/contacto/indexContacto.html">Contacto</a>
+                        <a class="nav-link" href="http://localhost/IoTIncendios/usersWEb/usersABM.php">Usuarios</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="../frontend/login.html">Login</a>
+                        <a class="nav-link" href="http://localhost/IoTIncendios/microWEb/microABM.php">Microcontroladores</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Datos Sensores
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=flama">Flama</a>
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=humedad">Humedad</a>
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=humo">Humo</a>
+                            <a class="dropdown-item" href="http://localhost/IoTIncendios/datosWeb/ver_datos.php?sensor=temperatura">Temperatura</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://127.0.0.1:5501/frontend/index.html">Cerrar Sesion</a>
                     </li>
                 </ul>
             </div>
