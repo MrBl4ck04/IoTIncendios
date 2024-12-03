@@ -33,6 +33,34 @@ if ($sensor && $id && isset($_POST['confirmar_eliminacion'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Datos del Sensor</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <style>
+        h1 {
+            color: #ffffff; /* Texto en blanco */
+            font-size: 2.5rem; /* Tamaño del texto */
+            text-align: center; /* Centrado */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Sombra */
+        }
+
+        body {
+            background: linear-gradient(to bottom, #181d27, #254d32, #3a7d44, #69b578, #d0db97);
+            margin: 0;
+            padding: 0;
+            color: #333;
+            min-height: 100vh; /* Garantiza que el fondo cubra toda la pantalla */
+            display: flex;
+            flex-direction: column; /* Organiza verticalmente el contenido */
+        }
+
+        table {
+            background-color: #ffffff; /* Fondo blanco para la tabla */
+            border-radius: 8px; /* Bordes redondeados */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra */
+        }
+
+        th, td {
+            background-color: #ffffff; /* Fondo blanco para las celdas */
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar principal con enlaces -->
@@ -45,7 +73,7 @@ if ($sensor && $id && isset($_POST['confirmar_eliminacion'])) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="http://localhost/IoTIncendios/mapa.php">Puntos de alerta</a>
+                        <a class="nav-link" href="http://localhost/index.php">Puntos de alerta</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="http://localhost/IoTIncendios/usersWEb/usersABM.php">Usuarios</a>

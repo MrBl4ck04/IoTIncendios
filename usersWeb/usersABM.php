@@ -22,6 +22,34 @@
             document.getElementById('deleteModal').style.display = 'none';
         }
     </script>
+    <style>
+        h1 {
+            color: #ffffff; /* Texto en blanco */
+            font-size: 2.5rem; /* Tamaño del texto */
+            text-align: center; /* Centrado */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Sombra */
+        }
+
+        body {
+            background: linear-gradient(to bottom, #000000, #a5d6a7);
+            margin: 0;
+            padding: 0;
+            color: #333;
+            min-height: 100vh; /* Garantiza que el fondo cubra toda la pantalla */
+            display: flex;
+            flex-direction: column; /* Organiza verticalmente el contenido */
+        }
+
+        table {
+            background-color: #ffffff; /* Fondo blanco para la tabla */
+            border-radius: 8px; /* Bordes redondeados */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra */
+        }
+
+        th, td {
+            background-color: #ffffff; /* Fondo blanco para las celdas */
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top">
@@ -33,7 +61,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="http://localhost/IoTIncendios/mapa.php">Puntos de alerta</a>
+                    <a class="nav-link" href="http://localhost/index.php">Puntos de alerta</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="http://localhost/IoTIncendios/usersWEb/usersABM.php">Usuarios</a>
