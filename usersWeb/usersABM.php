@@ -104,7 +104,7 @@
         <h1>Gestión de Usuarios</h1>
         <a href="add_user.php" class="btn btn-success mb-3">Agregar Usuario</a>
         <table class="table table-striped" id="usuariosTable">
-            <thead>
+            <thead class="thead-dark">
                 <tr>
                     <th>ID</th>
                     <th>Usuario</th>

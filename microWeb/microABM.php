@@ -136,16 +136,26 @@ $result = $conn->query($sql);
         <a href="agregar_ubicacion.php" class="btn btn-success">Agregar Ubicación</a>
     </div>
 
-    <!-- Modal de Confirmación -->
-    <div id="modalEliminar" class="modal" style="display: none;">
-        <div class="modal-content">
-            <p>¿Estás seguro de que deseas eliminar este microcontrolador?</p>
-            <div class="modal-actions">
-                <button id="cancelarEliminar" class="btn btn-secondary">Cancelar</button>
-                <button id="confirmarEliminar" class="btn btn-danger">Eliminar</button>
+    
+
+        <!-- Modal de confirmación de eliminación -->
+        <div id="modalEliminar" class="modal" tabindex="-1" role="dialog" style="display: none;">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmar Eliminación</h5>
+                      
+                    </div>
+                    <div class="modal-body">
+                        <p>¿Estás seguro de que deseas eliminar este usuario?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button  id="cancelarEliminar" type="button"   class="btn btn-secondary">Cancelar</button>
+                        <button type="button" id="confirmarEliminar" class="btn btn-danger">Eliminar</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
     <!-- Menú contextual -->
     <div id="contextMenu" class="context-menu">
