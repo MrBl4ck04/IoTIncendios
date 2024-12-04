@@ -309,6 +309,7 @@ legend.addTo(map);
     </script>
 
    
+</script>
     <!-- Botón circular flotante -->
 <div id="help-button" onclick="openModal()">?</div>
 
@@ -318,13 +319,13 @@ legend.addTo(map);
         <span class="close-btn" onclick="closeModal()">&times;</span>
         <h2>Información Importante</h2>
         <div class="info-box">
-    <p>
-        El siguiente mapa muestra los promedios de valores en los sensores <strong>FLAMA</strong>, <strong>TEMPERATURA</strong>, <strong>HUMEDAD</strong> y <strong>HUMO</strong>.<br><br>
-        Cada burbuja, representada por un color específico, indica la magnitud de los valores del sensor. Mientras más grandes sean los valores, mayor será el tamaño de la burbuja.<br><br>
-        <strong>Nota:</strong> En el sensor de <strong>flama</strong>, una burbuja más pequeña significa que el fuego está más cerca.
-        Asimismo considerar el sensor de <strong>humedad</strong> , mientras mas grande la burbuja indica mayor humedad <strong>menor riesgo</strong> de incendio.
-    </p>
-</div>
+            <p>
+                El siguiente mapa muestra los promedios de valores en los sensores <strong>FLAMA</strong>, <strong>TEMPERATURA</strong>, <strong>HUMEDAD</strong> y <strong>HUMO</strong>.<br><br>
+                Cada burbuja, representada por un color específico, indica la magnitud de los valores del sensor. Mientras más grandes sean los valores, mayor será el tamaño de la burbuja.<br><br>
+                <strong>Nota:</strong> En el sensor de <strong>flama</strong>, una burbuja más pequeña significa que el fuego está más cerca.
+                Asimismo considerar el sensor de <strong>humedad</strong> , mientras mas grande la burbuja indica mayor humedad <strong>menor riesgo</strong> de incendio.
+            </p>
+        </div>
     </div>
 </div>
 
@@ -332,24 +333,23 @@ legend.addTo(map);
 <style>
     /* Botón circular */
     #help-button {
-    position: fixed;
-    bottom: 30px; /* Ajustado para estar en la esquina inferior derecha */
-    right: 30px;
-    width: 50px;
-    height: 50px;
-    background-color: #254d32;
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-}
-
+        position: fixed;
+        top: 780px;
+        right: 200px;
+        width: 50px;
+        height: 50px;
+        background-color: #254d32;
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+    }
     .info-box {
         background-color: #fff;  /* Fondo blanco o color claro */
         padding: 20px;
@@ -361,8 +361,6 @@ legend.addTo(map);
         line-height: 1.6; /* Espaciado entre líneas */
         color: #333; /* Color de texto oscuro */
         text-align: justify; /* Alineación justificada */
-        z-index: 1000;
-    
     }
 
     .info-box p {
@@ -406,6 +404,44 @@ legend.addTo(map);
     .close-btn:hover {
         color: black;
     }
+    /* Estilo para el modal */
+    .modal-content {
+        background-color: #fefefe;
+        padding: 20px;
+        border-radius: 10px;
+        width: 400px;
+        position: relative; /* Para posicionar elementos internos */
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Estilo del título del modal */
+    .modal-content h2 {
+        font-size: 24px;  /* Tamaño de letra más grande */
+        color: #254d32;  /* Color distintivo */
+        margin-bottom: 15px;  /* Espaciado inferior */
+        font-family: 'Arial Black', Arial, sans-serif;  /* Fuente más llamativa */
+        text-transform: uppercase;  /* Convertir a mayúsculas */
+        border-bottom: 2px solid #254d32;  /* Línea inferior */
+        padding-bottom: 10px;  /* Espaciado con la línea */
+    }
+
+    /* Botón de cierre */
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        color: #333;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s;  /* Efecto suave al cambiar de color */
+    }
+
+    .close-btn:hover {
+        color: #e74c3c;  /* Color rojo en hover */
+    }
+
 </style>
 
 <!-- Agrega esto antes de cerrar </body> -->
@@ -428,7 +464,6 @@ legend.addTo(map);
         }
     }
 </script>
- <!-- Scripts de Bootstrap -->
  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
