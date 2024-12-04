@@ -129,7 +129,7 @@ echo "<script>const promedios = " . json_encode($promedios) . ";</script>";
 
         }
         #map {
-            width: 70%;
+            width: 80%;
             height: 700px;
             border: 2px solid #ccc;
             border-radius: 5px;
