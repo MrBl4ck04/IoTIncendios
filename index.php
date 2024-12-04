@@ -40,21 +40,22 @@ if ($sensor === 'todos') {
     }
 } else {
     $query = "
-        SELECT 
-            ubicaciones.latitud, 
-            ubicaciones.longitud, 
-            microcontroladores.microcontroladores_id AS micro_id, 
-            '$sensor' AS tipo,
-            (
-                SELECT AVG(valor) 
-                FROM $sensor 
-                WHERE $sensor.microcontroladores_id = microcontroladores.microcontroladores_id 
-                ORDER BY fecha DESC, hora DESC
-                LIMIT 20
-            ) AS promedio
-        FROM microcontroladores
-        JOIN ubicaciones ON microcontroladores.ubicaciones_id = ubicaciones.ubicaciones_id
-    ";
+    SELECT 
+        ubicaciones.latitud, 
+        ubicaciones.longitud, 
+        microcontroladores.microcontroladores_id AS micro_id, 
+        '$sensor' AS tipo,
+        (
+            SELECT AVG(valor) 
+            FROM $sensor 
+            WHERE $sensor.microcontroladores_id = microcontroladores.microcontroladores_id 
+            ORDER BY fecha DESC, hora DESC
+            LIMIT 20
+        ) AS promedio
+    FROM microcontroladores
+    JOIN ubicaciones ON microcontroladores.ubicaciones_id = ubicaciones.ubicaciones_id
+";
+
     if ($ubicacion !== 'todas') {
         $query .= " WHERE ubicaciones.ubicaciones_id = $ubicacion";
     }
@@ -120,21 +121,60 @@ echo "<script>const promedios = " . json_encode($promedios) . ";</script>";
         }
         h1 {
             margin: 20px;
-            color: #333;
+            color: #ffffff;
         }
         #filter {
             margin-bottom: 10px;
+            color: #ffffff;
+
         }
         #map {
-            width: 90%;
-            height: 500px;
+            width: 80%;
+            height: 700px;
             border: 2px solid #ccc;
             border-radius: 5px;
         }
+        h1 {
+            color: #ffffff; /* Texto en blanco */
+            font-size: 2.5rem; /* Tamaño del texto */
+            text-align: center; /* Centrado */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Sombra */
+        }
+
+        body {
+            background: linear-gradient(to bottom, #181d27, #254d32, #3a7d44, #69b578, #d0db97);
+            margin: 0;
+            padding: 0;
+            color: #333;
+            min-height: 100vh; /* Garantiza que el fondo cubra toda la pantalla */
+            display: flex;
+            flex-direction: column; /* Organiza verticalmente el contenido */
+        }
+
     </style>
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../frontend/index.html">OnFire</a>
+    
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarOpen">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <div class="collapse navbar-collapse" id="navbarOpen">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="goBack()">Volver</a>
+                    </li>
+                </ul>
+            </div>
+    
+        </div>
+    </nav>
+    <div class="container" style="margin-top: 100px;"></div>
     <h1>Puntos de Alerta</h1>
     <div id="filter">
         <label for="sensor">Filtrar por sensor:</label>
@@ -151,6 +191,7 @@ echo "<script>const promedios = " . json_encode($promedios) . ";</script>";
         </select>
     </div>
     <div id="map"></div>
+    </div>
     <script>
         const map = L.map('map').setView([-16.0654, -61.0579], 8); // Coordenadas iniciales
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -187,34 +228,51 @@ echo "<script>const promedios = " . json_encode($promedios) . ";</script>";
             fetch(`index.php?sensor=${sensor}&ubicacion=${ubicacion}&ajax=1`)
                 .then(response => response.json())
                 .then(data => {
-                    // Eliminar marcadores y círculos existentes
-                    markers.forEach(marker => map.removeLayer(marker));
-                    circles.forEach(circle => map.removeLayer(circle));
-                    markers = [];
-                    circles = [];
+    // Eliminar marcadores y círculos existentes
+    markers.forEach(marker => map.removeLayer(marker));
+    circles.forEach(circle => map.removeLayer(circle));
+    markers = [];
+    circles = [];
 
-                    // Agregar nuevos marcadores y círculos
-                    data.forEach(location => {
-                        const marker = L.marker([location.latitud, location.longitud])
-                            .addTo(map)
-                            .bindPopup(`
-                                Microcontrolador ID: ${location.micro_id}<br>
-                                Sensor: ${location.tipo}<br>
-                                Promedio: ${location.promedio || 'N/A'}
-                            `);
+    // Agregar nuevos marcadores y círculos
+    data.forEach(location => {
+        console.log('Promedio:', location.promedio);  // Verificar los promedios
+        
+        const marker = L.marker([location.latitud, location.longitud])
+            .addTo(map)
+            .bindPopup(`
+                Microcontrolador ID: ${location.micro_id}<br>
+                Sensor: ${location.tipo}<br>
+                Promedio: ${location.promedio || 'N/A'}
+            `);
 
-                        const radius = location.promedio ? location.promedio * 10 : 10;
-                        const circle = L.circle([location.latitud, location.longitud], {
-                            color: getColorBySensor(location.tipo),
-                            fillColor: getColorBySensor(location.tipo),
-                            fillOpacity: 0.3,
-                            radius: radius
-                        }).addTo(map);
+        // Verificar el tipo de sensor y ajustar el tamaño del círculo
+        let radius;
+        if (location.tipo === 'temperatura') {
+            radius = location.promedio ? location.promedio * 800 : 10; // Multiplicar por 1000 para temperatura
+        } else if (location.tipo === 'humedad') {
+            radius = location.promedio ? location.promedio * 250 : 10; // Multiplicar por 500 para humedad
+        } else if (location.tipo === 'flama') {
+            radius = location.promedio ? location.promedio * 10 : 10; // Multiplicar por 100 para flama
+        } else if (location.tipo === 'humo') {
+            radius = location.promedio ? location.promedio * 50 : 10; // Multiplicar por 10 para humo
+        } else {
+            radius = 10; // Valor predeterminado en caso de que no coincida con ningún tipo
+        }
 
-                        markers.push(marker);
-                        circles.push(circle);
-                    });
-                })
+        const circle = L.circle([location.latitud, location.longitud], {
+            color: getColorBySensor(location.tipo),
+            fillColor: getColorBySensor(location.tipo),
+            fillOpacity: 0.3,
+            radius: radius
+        }).addTo(map);
+
+        markers.push(marker);
+        circles.push(circle);
+    });
+})
+
+
                 .catch(err => console.error('Error al obtener los datos:', err));
         }
 
@@ -244,5 +302,170 @@ legend.addTo(map);
 
 
     </script>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+
+   
+</script>
+    <!-- Botón circular flotante -->
+<div id="help-button" onclick="openModal()">?</div>
+
+<!-- Modal -->
+<div id="info-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2>Información Importante</h2>
+        <div class="info-box">
+            <p>
+                El siguiente mapa muestra los promedios de valores en los sensores <strong>FLAMA</strong>, <strong>TEMPERATURA</strong>, <strong>HUMEDAD</strong> y <strong>HUMO</strong>.<br><br>
+                Cada burbuja, representada por un color específico, indica la magnitud de los valores del sensor. Mientras más grandes sean los valores, mayor será el tamaño de la burbuja.<br><br>
+                <strong>Nota:</strong> En el sensor de <strong>flama</strong>, una burbuja más pequeña significa que el fuego está más cerca.
+                Asimismo considerar el sensor de <strong>humedad</strong> , mientras mas grande la burbuja indica mayor humedad <strong>menor riesgo</strong> de incendio.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Agrega esto en la sección <style> existente -->
+<style>
+    /* Botón circular */
+    #help-button {
+    position: fixed;
+    bottom: 20px; /* Distancia desde el fondo */
+    right: 20px; /* Distancia desde la izquierda */
+    width: 50px;
+    height: 50px;
+    background-color: #254d32;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+    .info-box {
+        background-color: #fff;  /* Fondo blanco o color claro */
+        padding: 20px;
+        margin: 20px auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        max-width: 600px; /* Ancho máximo para centrar */
+        font-family: Arial, sans-serif; /* Fuente simple y clara */
+        line-height: 1.6; /* Espaciado entre líneas */
+        color: #333; /* Color de texto oscuro */
+        text-align: justify; /* Alineación justificada */
+    }
+
+    .info-box p {
+        margin: 0; /* Eliminar margen por defecto */
+    }
+
+    .info-box strong {
+        color: #254d32; /* Color distintivo para palabras clave */
+    }
+    /* Modal */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1001;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        padding: 20px;
+        border-radius: 10px;
+        width: 400px;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .close-btn {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close-btn:hover {
+        color: black;
+    }
+    /* Estilo para el modal */
+    .modal-content {
+        background-color: #fefefe;
+        padding: 20px;
+        border-radius: 10px;
+        width: 400px;
+        position: relative; /* Para posicionar elementos internos */
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Estilo del título del modal */
+    .modal-content h2 {
+        font-size: 24px;  /* Tamaño de letra más grande */
+        color: #254d32;  /* Color distintivo */
+        margin-bottom: 15px;  /* Espaciado inferior */
+        font-family: 'Arial Black', Arial, sans-serif;  /* Fuente más llamativa */
+        text-transform: uppercase;  /* Convertir a mayúsculas */
+        border-bottom: 2px solid #254d32;  /* Línea inferior */
+        padding-bottom: 10px;  /* Espaciado con la línea */
+    }
+
+    /* Botón de cierre */
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        color: #333;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s;  /* Efecto suave al cambiar de color */
+    }
+
+    .close-btn:hover {
+        color: #e74c3c;  /* Color rojo en hover */
+    }
+
+</style>
+
+<!-- Agrega esto antes de cerrar </body> -->
+<script>
+    // Abrir modal
+    function openModal() {
+        document.getElementById('info-modal').style.display = 'flex';
+    }
+
+    // Cerrar modal
+    function closeModal() {
+        document.getElementById('info-modal').style.display = 'none';
+    }
+
+    // Cerrar modal al hacer clic fuera del contenido
+    window.onclick = function(event) {
+        const modal = document.getElementById('info-modal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+</script>
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
