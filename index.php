@@ -333,23 +333,24 @@ legend.addTo(map);
 <style>
     /* Botón circular */
     #help-button {
-        position: fixed;
-        top: 780px;
-        right: 200px;
-        width: 50px;
-        height: 50px;
-        background-color: #254d32;
-        color: white;
-        font-size: 24px;
-        font-weight: bold;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-    }
+    position: fixed;
+    bottom: 20px; /* Distancia desde el fondo */
+    right: 20px; /* Distancia desde la izquierda */
+    width: 50px;
+    height: 50px;
+    background-color: #254d32;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
     .info-box {
         background-color: #fff;  /* Fondo blanco o color claro */
         padding: 20px;
