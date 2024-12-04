@@ -132,9 +132,29 @@ echo "<script>const promedios = " . json_encode($promedios) . ";</script>";
             border-radius: 5px;
         }
     </style>
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../frontend/index.html">OnFire</a>
+    
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarOpen">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <div class="collapse navbar-collapse" id="navbarOpen">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="goBack()">Volver</a>
+                    </li>
+                </ul>
+            </div>
+    
+        </div>
+    </nav>
+    <div class="container" style="margin-top: 100px;"></div>
     <h1>Puntos de Alerta</h1>
     <div id="filter">
         <label for="sensor">Filtrar por sensor:</label>
@@ -151,6 +171,7 @@ echo "<script>const promedios = " . json_encode($promedios) . ";</script>";
         </select>
     </div>
     <div id="map"></div>
+    </div>
     <script>
         const map = L.map('map').setView([-16.0654, -61.0579], 8); // Coordenadas iniciales
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -244,5 +265,14 @@ legend.addTo(map);
 
 
     </script>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+
+    <!-- Scripts de Bootstrap -->
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
